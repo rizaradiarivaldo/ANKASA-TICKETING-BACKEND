@@ -1,6 +1,6 @@
 const airlinesModel = require('../models/airlines')
 const upload = require("../helpers/uploads");
-const { success, successWithMeta, failed, tokenResult } = require('../helpers/response')
+const { success, successWithMeta, notfound, failed } = require('../helpers/response')
 const fs = require('fs')
 
 const redis = require("redis");
@@ -49,7 +49,11 @@ const airlines = {
       const id = req.params.id
       airlinesModel.getDetail(id)
         .then((result) => {
-          success(res, result, `Get detail by ID: ${id} success`)
+          if (result.length === 0) {
+            notfound(res, [], 'Data not found!')
+          } else {
+            success(res, result, `Get detail by ID: ${id} success`)
+          }
         }).catch((err) => {
           failed(res, [], err.message)
         });
@@ -82,36 +86,39 @@ const airlines = {
       failed(res, [], 'Internal Server Error')
     }
   },
-
   update: (req, res) => {
     try {
       const id = req.params.id
-      const body = req.body;
-      body.image = !req.file ? req.file : req.file.filename;
+      const body = req.body
       airlinesModel.getDetail(id)
-        .then((results) => {
-          const dataImage = results[0].image
-          fs.unlink(`src/uploads/${dataImage}`, (err) => {
-            if (err) {
-              failed(res, [], err.message)
-            } else {
-              airlinesModel.update(body, id)
-                .then((result) => {
-                  redisClient.del("airlines")
-                  success(res, result, `ID ${id} success updated!`)
-                }).catch((err) => {
-                  failed(res, [], err.message)
-                });
-            }
-          })
+        .then((response) => {
+          body.image = req.file.filename
+          const oldImage = response[0].image
+          let imageName = null
+          if (!body.image) {
+            imageName = oldImage
+          } else {
+            imageName = body.image
+            fs.unlink(`src/uploads/${oldImage}`, (err) => {
+              if (err) {
+                failed(res, [], err.message)
+              } else {
+                airlinesModel.update(body, id)
+                  .then((result) => {
+                    success(res, result, 'Data Updated!')
+                  }).catch((error) => {
+                    failed(res, [], error.message)
+                  });
+              }
+            })
+          }
         }).catch((err) => {
-          console.log(err)
+          failed(res, [], err.message)
         });
     } catch (error) {
-      failed(res, [], 'Internal Server Error')
+      failed(res, [], error.message)
     }
   },
-
   delete: (req, res) => {
     try {
       const id = req.params.id
@@ -138,7 +145,5 @@ const airlines = {
       failed(res, [], 'Internal Server Error')
     }
   },
-
 }
-
 module.exports = airlines
