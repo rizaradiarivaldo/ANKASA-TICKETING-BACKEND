@@ -6,7 +6,7 @@ const response = {
             status: 200,
             data
         }
-        res.json(result)
+        res.json(result).status(200)
     },
     failed: (res, data, message) => {
         const result = {
@@ -15,7 +15,7 @@ const response = {
             status: 500,
             data
         }
-        res.json(result)
+        res.json(result).status(500)
     },
     tokenResult: (res, data, message) => {
         const result = {
@@ -24,7 +24,7 @@ const response = {
             status: 201,
             data
         }
-        res.json(result)
+        res.json(result).status(201)
     },
     tokenErrorResult: (res, data, message) => {
         const result = {
@@ -33,7 +33,7 @@ const response = {
             status: 501,
             data
         }
-        res.json(result)
+        res.json(result).status(501)
     },
     tokenExpiredResult: (res, data, message) => {
         const result = {
@@ -42,7 +42,7 @@ const response = {
             status: 502,
             data
         }
-        res.json(result)
+        res.json(result).status(502)
     }
 }
 
