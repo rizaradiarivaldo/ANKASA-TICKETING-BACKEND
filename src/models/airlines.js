@@ -49,6 +49,18 @@ const airlines = {
     });
   },
 
+  update: (data, id) => {
+    return new Promise((resolve, reject) => {
+      db.query(`UPDATE airlines SET ? WHERE id = ?`, [data, id], (err, result) => {
+        if (err) {
+          reject(new Error(err));
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  },
+
   delete: (id) => {
     return new Promise((resolve, reject) => {
       db.query(`DELETE FROM airlines WHERE id='${id}'`, (err, result) => {

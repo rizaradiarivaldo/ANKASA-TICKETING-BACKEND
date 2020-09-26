@@ -83,42 +83,57 @@ const airlines = {
     }
   },
 
+  update: (req, res) => {
+    try {
+      const id = req.params.id
+      const body = req.body;
+      body.image = !req.file ? req.file : req.file.filename;
+      airlinesModel.getDetail(id)
+        .then((results) => {
+          const dataImage = results[0].image
+          fs.unlink(`src/uploads/${dataImage}`, (err) => {
+            if (err) {
+              failed(res, [], err.message)
+            } else {
+              airlinesModel.update(body, id)
+                .then((result) => {
+                  redisClient.del("airlines")
+                  success(res, result, `ID ${id} success updated!`)
+                }).catch((err) => {
+                  failed(res, [], err.message)
+                });
+            }
+          })
+        }).catch((err) => {
+          console.log(err)
+        });
+    } catch (error) {
+      failed(res, [], 'Internal Server Error')
+    }
+  },
+
   // delete: (req, res) => {
   //   try {
   //     const id = req.params.id
-
   //     airlinesModel.delete(id)
-  //       .then((result) => {
-  //         redisClient.del("airlines")
-  //         success(res, result, `ID ${id} success deleted!`)
-  //       }).catch((err) => {
-  //         failed(res, [], err.message)
-  //       });
-
-  //     airlinesModel.getDetail(id)
-  //       .then((results) => {
-  //         const dataImage = results[0].image
-  //         fs.unlink(`src/uploads/${dataImage}`, (err) => {
-  //           if (err) {
-  //             failed(res, [], err.message)
-  //           } else {
-  //             success(res, [], `Image Deleted!`)
-  //           }
-  //         })
+  //       .then(() => {
+  //         airlinesModel.getDetail(id)
+  //           .then((response) => {
+  //             console.log(response)
+  //           }).catch((error) => {
+  //             console.log(error)
+  //           });
   //       }).catch((err) => {
   //         console.log(err)
   //       });
-
-
   //   } catch (error) {
   //     failed(res, [], 'Internal Server Error')
   //   }
   // },
+
   delete: (req, res) => {
     try {
       const id = req.params.id
-
-
       airlinesModel.getDetail(id)
         .then((results) => {
           const dataImage = results[0].image
@@ -138,15 +153,11 @@ const airlines = {
         }).catch((err) => {
           console.log(err)
         });
-
-
-
-
-
     } catch (error) {
       failed(res, [], 'Internal Server Error')
     }
-  }
+  },
+
 }
 
 module.exports = airlines

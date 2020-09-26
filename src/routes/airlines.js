@@ -8,6 +8,7 @@ router
   .get("/getdetail/:id", airlinesController.getDetail)
   .post("/insert", airlinesController.insert)
   .delete("/delete/:id", airlinesController.delete)
+  .patch('/update/:id', airlinesController.update)
 
 
 
