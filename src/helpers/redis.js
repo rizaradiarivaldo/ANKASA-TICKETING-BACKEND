@@ -39,6 +39,17 @@ module.exports = {
     })
   },
 
+  getBooking: (req, res, next) => {
+    redisClient.get('booking', (err, reply) => {
+      const data = JSON.parse(reply)
+      if (reply) {
+        success(res, reply, 'Get data from redis success')
+      } else {
+        next()
+      }
+    })
+  }
+
   // getDetailProduct: (req, res, next) => {
   //   const id = req.params.id
   //   if (id) {
