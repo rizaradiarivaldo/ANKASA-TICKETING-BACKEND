@@ -1,6 +1,7 @@
 const upload = require('../../../pos-backend/src/helpers/uploads')
 const airlinesModel = require('../models/airlines')
-// const upload = require("../helpers/uploads");
+const upload = require("../helpers/uploads");
+const { success, failed, tokenResult } = require('../helpers/response')
 
 const airlines = {
   insert: (req, res) => {

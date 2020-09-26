@@ -11,7 +11,7 @@ const app = express()
 app.get('/', (req, res) => {
     res.send('Hello World !')
 })
-app.use("/product", airlinesRouter);
+app.use("/airlines", airlinesRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
