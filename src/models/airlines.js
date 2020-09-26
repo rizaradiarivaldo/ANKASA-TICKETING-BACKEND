@@ -39,8 +39,7 @@ const airlines = {
 
   insert: (data) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO airlines (name, image) VALUES ('${data.name}','${data.image}')`;
-      db.query(query, (err, result) => {
+      db.query(`INSERT INTO airlines (name, image) VALUES ('${data.name}','${data.image}')`, (err, result) => {
         if (err) {
           reject(new Error(err));
         } else {
@@ -48,6 +47,18 @@ const airlines = {
         }
       });
     });
+  },
+
+  delete: (id) => {
+    return new Promise((resolve, reject) => {
+      db.query(`DELETE FROM airlines WHERE id='${id}'`, (err, result) => {
+        if (err) {
+          reject(new Error(err))
+        } else {
+          resolve(result)
+        }
+      })
+    })
   }
 }
 

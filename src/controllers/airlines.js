@@ -1,73 +1,151 @@
 const airlinesModel = require('../models/airlines')
 const upload = require("../helpers/uploads");
 const { success, successWithMeta, failed, tokenResult } = require('../helpers/response')
+const fs = require('fs')
 
 const redis = require("redis");
 const redisClient = redis.createClient();
 
 const airlines = {
   getAll: (req, res) => {
-    const name = !req.query.name ? "" : req.query.name;
-    const sort = !req.query.sort ? "id" : req.query.sort;
-    const typesort = !req.query.typesort ? "ASC" : req.query.typesort;
+    try {
+      const name = !req.query.name ? "" : req.query.name;
+      const sort = !req.query.sort ? "id" : req.query.sort;
+      const typesort = !req.query.typesort ? "ASC" : req.query.typesort;
 
-    const limit = !req.query.limit ? 10 : parseInt(req.query.limit);
-    const page = !req.query.page ? 1 : parseInt(req.query.page);
-    const offset = page <= 1 ? 0 : (page - 1) * limit;
+      const limit = !req.query.limit ? 10 : parseInt(req.query.limit);
+      const page = !req.query.page ? 1 : parseInt(req.query.page);
+      const offset = page <= 1 ? 0 : (page - 1) * limit;
 
-    airlinesModel
-      .getAll(name, sort, typesort, limit, offset)
-      .then((result) => {
-        // redisClient.set("products", JSON.stringify(result));
-        const totalRows = result[0].count;
-        const meta = {
-          total: totalRows,
-          totalPage: Math.ceil(totalRows / limit),
-          page: page,
-        };
-        successWithMeta(res, result, meta, "Get all data success");
-      })
-      .catch((err) => {
-        failed(res, [], err.message);
-      });
+      airlinesModel
+        .getAll(name, sort, typesort, limit, offset)
+        .then((result) => {
+          // redisClient.set("products", JSON.stringify(result));
+          const totalRows = result[0].count;
+          const meta = {
+            total: totalRows,
+            totalPage: Math.ceil(totalRows / limit),
+            page: page,
+          };
+          successWithMeta(res, result, meta, "Get all data success");
+        })
+        .catch((err) => {
+          failed(res, [], err.message);
+        });
 
-    //getRedis 
-    airlinesModel.getAllData()
-      .then((results) => {
-        redisClient.set('airlines', JSON.stringify(results))
-      }).catch((err) => {
-        failed(result)
-      });
+      //getRedis 
+      airlinesModel.getAllData()
+        .then((results) => {
+          redisClient.set('airlines', JSON.stringify(results))
+        }).catch((err) => {
+          failed(res, [], err.message)
+        });
+    } catch (error) {
+      failed(res, [], 'Error Internal Server')
+    }
   },
   getDetail: (req, res) => {
-    const id = req.params.id
-    airlinesModel.getDetail(id)
-      .then((result) => {
-        success(res, result, `Get detail by ID: ${id} success`)
-      }).catch((err) => {
-        failed(res, [], err.message)
-      });
+    try {
+      const id = req.params.id
+      airlinesModel.getDetail(id)
+        .then((result) => {
+          success(res, result, `Get detail by ID: ${id} success`)
+        }).catch((err) => {
+          failed(res, [], err.message)
+        });
+    } catch (error) {
+      failed(res, [], 'Internal Server Error')
+    }
   },
   insert: (req, res) => {
-    upload.single("image")(req, res, (err) => {
-      if (err) {
-        if (err.code === 'LIMIT_FILE_SIZE') {
-          failed(res, [], 'Image must less 2mb')
-        } else {
-          failed(res, [], err.message)
-        }
-      } else {
-        const body = req.body;
-        body.image = !req.file.filename ? req.file : req.file.filename
-        airlinesModel.insert(body)
-          .then((result) => {
-            redisClient.del("airlines")
-            success(res, result, `Insert data success!`)
-          }).catch((err) => {
+    try {
+      upload.single("image")(req, res, (err) => {
+        if (err) {
+          if (err.code === 'LIMIT_FILE_SIZE') {
+            failed(res, [], 'Image must less 2mb')
+          } else {
             failed(res, [], err.message)
-          });
-      }
-    })
+          }
+        } else {
+          const body = req.body;
+          body.image = !req.file.filename ? req.file : req.file.filename
+          airlinesModel.insert(body)
+            .then((result) => {
+              redisClient.del("airlines")
+              success(res, result, `Insert data success!`)
+            }).catch((err) => {
+              failed(res, [], err.message)
+            });
+        }
+      })
+    } catch (error) {
+      failed(res, [], 'Internal Server Error')
+    }
+  },
+
+  // delete: (req, res) => {
+  //   try {
+  //     const id = req.params.id
+
+  //     airlinesModel.delete(id)
+  //       .then((result) => {
+  //         redisClient.del("airlines")
+  //         success(res, result, `ID ${id} success deleted!`)
+  //       }).catch((err) => {
+  //         failed(res, [], err.message)
+  //       });
+
+  //     airlinesModel.getDetail(id)
+  //       .then((results) => {
+  //         const dataImage = results[0].image
+  //         fs.unlink(`src/uploads/${dataImage}`, (err) => {
+  //           if (err) {
+  //             failed(res, [], err.message)
+  //           } else {
+  //             success(res, [], `Image Deleted!`)
+  //           }
+  //         })
+  //       }).catch((err) => {
+  //         console.log(err)
+  //       });
+
+
+  //   } catch (error) {
+  //     failed(res, [], 'Internal Server Error')
+  //   }
+  // },
+  delete: (req, res) => {
+    try {
+      const id = req.params.id
+
+
+      airlinesModel.getDetail(id)
+        .then((results) => {
+          const dataImage = results[0].image
+          fs.unlink(`src/uploads/${dataImage}`, (err) => {
+            if (err) {
+              failed(res, [], err.message)
+            } else {
+              airlinesModel.delete(id)
+                .then((result) => {
+                  redisClient.del("airlines")
+                  success(res, result, `ID ${id} success deleted!`)
+                }).catch((err) => {
+                  failed(res, [], err.message)
+                });
+            }
+          })
+        }).catch((err) => {
+          console.log(err)
+        });
+
+
+
+
+
+    } catch (error) {
+      failed(res, [], 'Internal Server Error')
+    }
   }
 }
 
