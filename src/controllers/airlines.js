@@ -1,7 +1,9 @@
-const upload = require('../../../pos-backend/src/helpers/uploads')
 const airlinesModel = require('../models/airlines')
 const upload = require("../helpers/uploads");
 const { success, failed, tokenResult } = require('../helpers/response')
+
+const redis = require("redis");
+const redisClient = redis.createClient();
 
 const airlines = {
   insert: (req, res) => {
