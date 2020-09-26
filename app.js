@@ -1,6 +1,7 @@
 const express = require('express')
 // const bodyParser = require('body-parser')
 const { PORT } = require('./src/helpers/env')
+const airlinesRouter = require('./src/routes/airlines')
 
 const app = express()
 
@@ -10,6 +11,7 @@ const app = express()
 app.get('/', (req, res) => {
     res.send('Hello World !')
 })
+app.use("/product", airlinesRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)

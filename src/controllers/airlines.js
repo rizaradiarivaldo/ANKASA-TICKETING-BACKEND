@@ -19,7 +19,7 @@ const airlines = {
             redisClient.del("airlines")
             success(res, result, `Insert data success!`)
           }).catch((err) => {
-            failed(res, [], 'Insert data failed')
+            failed(res, [], err.message)
           });
       }
     })
