@@ -1,7 +1,7 @@
 const redis = require("redis");
 const redisClient = redis.createClient();
 
-const { success, failed, tokenResult } = require('../helpers/response')
+const { success, successWithMeta, failed, tokenResult } = require('../helpers/response')
 
 const _ = require('lodash');
 
@@ -32,8 +32,7 @@ module.exports = {
           limit,
         };
         const newResult = results.slice(start, offset)
-        // successWithMeta(res, newResult, meta, 'Get data success from redis')
-        success(res, newResult, 'Get all data success from redis')
+        successWithMeta(res, newResult, meta, 'Get data success from redis')
       } else {
         next()
       }

@@ -1,11 +1,44 @@
 const airlinesModel = require('../models/airlines')
 const upload = require("../helpers/uploads");
-const { success, failed, tokenResult } = require('../helpers/response')
+const { success, successWithMeta, failed, tokenResult } = require('../helpers/response')
 
 const redis = require("redis");
 const redisClient = redis.createClient();
 
 const airlines = {
+  getAll: (req, res) => {
+    const name = !req.query.name ? "" : req.query.name;
+    const sort = !req.query.sort ? "id" : req.query.sort;
+    const typesort = !req.query.typesort ? "ASC" : req.query.typesort;
+
+    const limit = !req.query.limit ? 10 : parseInt(req.query.limit);
+    const page = !req.query.page ? 1 : parseInt(req.query.page);
+    const offset = page <= 1 ? 0 : (page - 1) * limit;
+
+    airlinesModel
+      .getAll(name, sort, typesort, limit, offset)
+      .then((result) => {
+        // redisClient.set("products", JSON.stringify(result));
+        const totalRows = result[0].count;
+        const meta = {
+          total: totalRows,
+          totalPage: Math.ceil(totalRows / limit),
+          page: page,
+        };
+        successWithMeta(res, result, meta, "Get all data success");
+      })
+      .catch((err) => {
+        failed(res, [], err.message);
+      });
+
+    //getRedis 
+    airlinesModel.getAllData()
+      .then((results) => {
+        redisClient.set('airlines', JSON.stringify(results))
+      }).catch((err) => {
+        failed(result)
+      });
+  },
   insert: (req, res) => {
     upload.single("image")(req, res, (err) => {
       if (err) {

@@ -4,7 +4,7 @@ const { getAirlines } = require('../helpers/redis')
 const router = express.Router();
 
 router
-  // .get("/getall", getAirlines, airlinesController.getAll)
+  .get("/getall", getAirlines, airlinesController.getAll)
   .post("/insert", airlinesController.insert)
 
 

@@ -8,6 +8,16 @@ const response = {
         }
         res.json(result).status(200)
     },
+    successWithMeta: (res, data, meta, message) => {
+        const result = {
+            message,
+            success: true,
+            code: 200,
+            meta,
+            data,
+        };
+        res.json(result).status(200);
+    },
     failed: (res, data, message) => {
         const result = {
             message,
