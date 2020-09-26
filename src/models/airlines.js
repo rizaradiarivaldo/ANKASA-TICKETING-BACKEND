@@ -25,6 +25,17 @@ const airlines = {
       })
     })
   },
+  getDetail: (id) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT * FROM airlines WHERE id='${id}'`, (err, result) => {
+        if (err) {
+          reject(new Error(err))
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  },
 
   insert: (data) => {
     return new Promise((resolve, reject) => {

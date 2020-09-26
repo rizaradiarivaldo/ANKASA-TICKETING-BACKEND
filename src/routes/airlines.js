@@ -5,7 +5,9 @@ const router = express.Router();
 
 router
   .get("/getall", getAirlines, airlinesController.getAll)
+  .get("/getdetail/:id", airlinesController.getDetail)
   .post("/insert", airlinesController.insert)
+
 
 
 module.exports = router

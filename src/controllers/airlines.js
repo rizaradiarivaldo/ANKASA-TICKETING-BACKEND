@@ -39,6 +39,15 @@ const airlines = {
         failed(result)
       });
   },
+  getDetail: (req, res) => {
+    const id = req.params.id
+    airlinesModel.getDetail(id)
+      .then((result) => {
+        success(res, result, `Get detail by ID: ${id} success`)
+      }).catch((err) => {
+        failed(res, [], err.message)
+      });
+  },
   insert: (req, res) => {
     upload.single("image")(req, res, (err) => {
       if (err) {
