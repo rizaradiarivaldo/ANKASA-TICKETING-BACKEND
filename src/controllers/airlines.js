@@ -112,25 +112,6 @@ const airlines = {
     }
   },
 
-  // delete: (req, res) => {
-  //   try {
-  //     const id = req.params.id
-  //     airlinesModel.delete(id)
-  //       .then(() => {
-  //         airlinesModel.getDetail(id)
-  //           .then((response) => {
-  //             console.log(response)
-  //           }).catch((error) => {
-  //             console.log(error)
-  //           });
-  //       }).catch((err) => {
-  //         console.log(err)
-  //       });
-  //   } catch (error) {
-  //     failed(res, [], 'Internal Server Error')
-  //   }
-  // },
-
   delete: (req, res) => {
     try {
       const id = req.params.id
