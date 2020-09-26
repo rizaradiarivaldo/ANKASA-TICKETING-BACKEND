@@ -34,7 +34,7 @@ const users = {
             if (isPasswordMatch) {
                 jwt.sign({
                     username: results.username
-                }, JWTKEY, {expiresIn: 36000},
+                }, JWTKEY, {expiresIn: 15},
                     (err, token) => {
                         if (err) {
                             console.log(err)
