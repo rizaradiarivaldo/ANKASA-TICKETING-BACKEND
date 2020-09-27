@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const { PRIVATEKEY, REFRESHTOKEN } = require('../helpers/env')
 const nodemailer = require('nodemailer')
 const env = require('../helpers/env')
+const fs = require('fs')
 
 const users = {
     register: async (req, res, next) => {
@@ -55,10 +56,8 @@ const users = {
                 const data = jwt.decode(token)
                 const email = data.email
                 userModel.updateUser(email).then((result) => {
-                    // res.render('index', { email })
                     success(res, result, 'Activation success')
                 }).catch(err => {
-                    // res.render('404')
                     failed(res, [], err.message)
                 })
             }
@@ -75,23 +74,27 @@ const users = {
                 const userRefreshToken = results.refreshToken
                 const isPasswordMatch = await bcrypt.compare(body.password, password)
 
+                const dataUser = {
+                    username: results.username,
+                    role: results.role
+                }
+
                 if (results.status === 0) {
                     failed(res, [], 'Activate your email first')
                 } else {
                     if (!isPasswordMatch) {
                         failed(res, [], 'Password is wrong')
                     } else {
-                        jwt.sign({
-                            username: results.username
-                        }, PRIVATEKEY, {expiresIn: 3600},
+                        jwt.sign({ dataUser }, PRIVATEKEY, {expiresIn: 3600},
                             (err, token) => {
                             if (err) {
                                     console.log(err)
                             } else {
                                 if (userRefreshToken === null) {
-                                    const id = results.id
-                                    const refreshToken = jwt.sign({ id }, REFRESHTOKEN)
-                                    userModel.updateRefreshToken(refreshToken, id).then(() => {
+                                    // const id = results.id
+                                    const refreshToken = jwt.sign({ dataUser }, REFRESHTOKEN)
+                                    const token = newerToken(dataUser)
+                                    userModel.updateRefreshToken(refreshToken, id).then((result) => {
                                         const data = {
                                             token: token,
                                             refreshToken: refreshToken
@@ -116,9 +119,59 @@ const users = {
             failed(res, [], 'Username salah')
         })
     },
-    // updateUser: (req, res) => {
+    updateData: (req, res) => {
+        try {
+            upload.single('image')(req, res, (err) => {
+                if (err) {
+                    if (err.code === 'LIMIT_FILE_SIZE') {
+                        failed(res, [], 'File size max 2Mb')
+                    } else {
+                        failed(res, [], err)
+                    }
+                } else {
+                    const id = req.params.id
+                    userModel.getDetail(id)
+                    .then((result) => {
+                        const oldImg = result[0].image
+                        body.image = !req.file ? oldImg : req.file.filename
 
-    // },
+                        if (body.image !== oldImg) {
+                            if (oldImg !== 'default.jpg') {
+                                fs.unlink(`src/upload/${oldImg}`, (err) => {
+                                    if (err) {
+                                        failed(res, [], err.message)
+                                    } else {
+                                        userModel.updateAllData(body, id).then((result) => {
+                                            success(res, result, 'Update data success')
+                                        }).catch((err) => {
+                                            failed(res, [], err.message)
+                                        })
+                                    }
+                                })
+                            } else {
+                                userModel.updateAllData(body, id).then((result) => {
+                                    success(res, result, 'Update data success')
+                                }).catch((err) => {
+                                    failed(res, [], err.message)
+                                })
+                            }
+                        } else {
+                            userModel.updateAllData(body, id).then((result) => {
+                                success(res, result, 'Update data success')
+                            }).catch((err) => {
+                                failed(res, [], err.message)
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        failed(res, [], err.message)
+                    })
+                }
+            })
+        } catch (error) {
+            
+        }
+    },
     requestToken: (req, res) => {
         const refreshToken = req.body.refreshToken
         userModel.checkRefreshToken(refreshToken).then((result) => {
@@ -136,6 +189,10 @@ const users = {
             failed(res, [], err.message)
         })
     }
+}
+
+const newerToken = (userData) => {
+    return jwt.sign(userData, PRIVATEKEY, { expiresIn: '1h' })
 }
 
 module.exports = users

@@ -69,6 +69,15 @@ const response = {
         }
         res.status(502)
         res.json(result)
+    },
+    forbidden: (res, message) => {
+        const result = {
+          message: message,
+          success: false,
+          code: 403,
+        };
+        res.status(403);
+        res.json(result);
     }
 }
 

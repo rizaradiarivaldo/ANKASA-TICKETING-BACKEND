@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
-const { tokenExpiredResult } = require('../helpers/response')
-const { JWTKEY } = require('../helpers/env')
+const { tokenExpiredResult,tokenErrorResult, forbidden } = require('../helpers/response')
+const { PRIVATEKEY } = require('../helpers/env')
 
 module.exports = {
     authentication: (req, res, next) => {
@@ -13,7 +13,7 @@ module.exports = {
     },
     authorization: (req, res, next) => {
         const token = req.headers.token
-        jwt.verify(token, JWTKEY, (err) => {
+        jwt.verify(token, PRIVATEKEY, (err) => {
             if (err && err.name === 'TokenExpiredError') {
                 tokenExpiredResult(res, [], 'Autentikasi gagal, token expired')
             } else if (err && err.name === 'JsonWebTokenError') {
@@ -21,6 +21,23 @@ module.exports = {
             } else {
                 next()
             }
+        })
+    },
+    admin: (req, res, next) => {
+        const token = req.headers.token
+        jwt.verify(token, PRIVATEKEY, (err, decode) => {
+          if (err && err.name === 'JsonWebTokenError') {
+            errToken(res, [], "Authentification failed !");
+          } else if (err && err.name === 'TokenExpiredError') {
+            errToken(res, [], "Token Expired !");
+          }
+          else {
+            if (decode.dataUser.role === 1) {
+              next()
+            } else {
+              forbidden(res, 'Dont have permission!')
+            }
+          }
         })
     }
 }
