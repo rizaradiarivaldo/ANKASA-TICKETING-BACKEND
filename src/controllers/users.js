@@ -13,9 +13,7 @@ const users = {
         const password = req.body.password
         const salt = await bcrypt.genSalt(10)
         const generate = await bcrypt.hash(password, salt)
-        userModel.register(data, generate)
-            .then(() => {
-                success(res, [], 'Please check your email to activation')
+        userModel.register(data, generate).then((result) => {
                 const token = jwt.sign({ email: data.email }, PRIVATEKEY)
                 const output = `
                     <center><h1>HELLO ${req.body.email}</h1>
@@ -41,10 +39,9 @@ const users = {
                     html: output
                 };
                 transporter.sendMail(Mail)
-            }).catch((err) => {
-                if (err.message = 'Duplicate entry') {
-                    failedReg(res, [], 'User Already Exist')
-                }
+                success(res, result, 'Please check your email to activation')
+            }).catch(() => {
+                failed(res, [], 'Email Already Exist')
             })
     },
     active: (req, res) => {
