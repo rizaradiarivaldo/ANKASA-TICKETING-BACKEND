@@ -86,32 +86,27 @@ const airlines = {
       failed(res, [], 'Internal Server Error')
     }
   },
+
   update: (req, res) => {
     try {
       const id = req.params.id
       const body = req.body
+      body.image = req.file.filename
       airlinesModel.getDetail(id)
         .then((response) => {
-          body.image = req.file.filename
           const oldImage = response[0].image
-          let imageName = null
-          if (!body.image) {
-            imageName = oldImage
-          } else {
-            imageName = body.image
-            fs.unlink(`src/uploads/${oldImage}`, (err) => {
-              if (err) {
-                failed(res, [], err.message)
-              } else {
-                airlinesModel.update(body, id)
-                  .then((result) => {
-                    success(res, result, 'Data Updated!')
-                  }).catch((error) => {
-                    failed(res, [], error.message)
-                  });
-              }
-            })
-          }
+          fs.unlink(`src/uploads/${oldImage}`, (err) => {
+            if (err) {
+              failed(res, [], err.message)
+            } else {
+              airlinesModel.update(body, id)
+                .then((result) => {
+                  success(res, result, 'Data Updated!')
+                }).catch((error) => {
+                  failed(res, [], error.message)
+                });
+            }
+          })
         }).catch((err) => {
           failed(res, [], err.message)
         });
@@ -119,6 +114,40 @@ const airlines = {
       failed(res, [], error.message)
     }
   },
+
+  // update: (req, res) => {
+  //   try {
+  //     const id = req.params.id
+  //     const body = req.body
+  //     airlinesModel.getDetail(id)
+  //       .then((response) => {
+  //         body.image = req.file.filename
+  //         const oldImage = response[0].image
+  //         let imageName = null
+  //         if (!body.image) {
+  //           imageName = oldImage
+  //         } else {
+  //           imageName = body.image
+  //           fs.unlink(`src/uploads/${oldImage}`, (err) => {
+  //             if (err) {
+  //               failed(res, [], err.message)
+  //             } else {
+  //               airlinesModel.update(body, id)
+  //                 .then((result) => {
+  //                   success(res, result, 'Data Updated!')
+  //                 }).catch((error) => {
+  //                   failed(res, [], error.message)
+  //                 });
+  //             }
+  //           })
+  //         }
+  //       }).catch((err) => {
+  //         failed(res, [], err.message)
+  //       });
+  //   } catch (error) {
+  //     failed(res, [], error.message)
+  //   }
+  // },
   delete: (req, res) => {
     try {
       const id = req.params.id
