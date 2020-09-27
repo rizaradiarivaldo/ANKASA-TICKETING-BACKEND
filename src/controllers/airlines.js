@@ -20,7 +20,6 @@ const airlines = {
       airlinesModel
         .getAll(name, sort, typesort, limit, offset)
         .then((result) => {
-          // redisClient.set("products", JSON.stringify(result));
           const totalRows = result[0].count;
           const meta = {
             total: totalRows,
@@ -61,6 +60,7 @@ const airlines = {
       failed(res, [], 'Internal Server Error')
     }
   },
+
   insert: (req, res) => {
     try {
       upload.single("image")(req, res, (err) => {
@@ -72,21 +72,25 @@ const airlines = {
           }
         } else {
           const body = req.body;
-          body.image = !req.file.filename ? req.file : req.file.filename
-          airlinesModel.insert(body)
-            .then((result) => {
-              redisClient.del("airlines")
-              success(res, result, `Insert data success!`)
-            }).catch((err) => {
-              failed(res, [], err.message)
-            });
+          body.image = !req.file ? undefined : req.file.filename
+          if (body.image === undefined) {
+            failed(res, [], 'Image must have a value')
+          } else {
+            airlinesModel.insert(body)
+              .then((result) => {
+                redisClient.del("airlines")
+                success(res, result, `Insert data success!`)
+              }).catch((err) => {
+                failed(res, [], err.message)
+              });
+
+          }
         }
       })
     } catch (error) {
       failed(res, [], 'Internal Server Error')
     }
   },
-
   update: (req, res) => {
     try {
       upload.single('image')(req, res, (err) => {
