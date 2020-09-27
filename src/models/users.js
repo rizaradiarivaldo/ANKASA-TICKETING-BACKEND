@@ -1,9 +1,9 @@
 const db = require('../configs/db')
 
 const users = {
-    register: (data) => {
+    register: (data, generate) => {
         return new Promise((resolve, reject) => {
-            db.query(`INSERT INTO users (email, password, username, role) VALUES ('${data.email}','${data.password}','${data.username}', 2) `, (err, result) => {
+            db.query(`INSERT INTO users (email, password, username, status, role) VALUES ('${data.email}','${generate}','${data.username}', 0, 2) `, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {
@@ -23,9 +23,9 @@ const users = {
             })
         })
     },
-    updateUser: (data, id) => {
+    updateUser: (email) => {
         return new Promise((resolve, reject) => {
-            db.query(`UPDATE users SET ? WHERE id=?`, [data, id], (err, result) => {
+            db.query(`UPDATE users SET status = 1 WHERE email='${email}'`, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {
