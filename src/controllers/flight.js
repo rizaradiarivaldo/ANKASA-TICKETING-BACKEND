@@ -1,4 +1,4 @@
-const airlinesModel = require('../models/airlines')
+const flightModel = require('../models/flight')
 const upload = require("../helpers/uploads");
 const { success, successWithMeta, notfound, failed } = require('../helpers/response')
 const fs = require('fs')
@@ -6,7 +6,7 @@ const fs = require('fs')
 const redis = require("redis");
 const redisClient = redis.createClient();
 
-const airlines = {
+const flight = {
   getAll: (req, res) => {
     try {
       const name = !req.query.name ? "" : req.query.name;
@@ -17,14 +17,14 @@ const airlines = {
       const page = !req.query.page ? 1 : parseInt(req.query.page);
       const offset = page <= 1 ? 0 : (page - 1) * limit;
 
-      airlinesModel
+      flightModel
         .getAll(name, sort, typesort, limit, offset)
         .then((result) => {
           // redisClient.set("products", JSON.stringify(result));
           const totalRows = result[0].count;
           const meta = {
             total: totalRows,
-            totalPage: Math.ceil(totalRows / limit),
+            totalPage: Math.ceil(totalRows / limit),  
             page: page,
           };
           successWithMeta(res, result, meta, "Get all data success");
@@ -34,9 +34,9 @@ const airlines = {
         });
 
       //getRedis 
-      airlinesModel.getAllData()
+      flightModel.getAllData()
         .then((results) => {
-          redisClient.set('airlines', JSON.stringify(results))
+          redisClient.set('flight', JSON.stringify(results))
         }).catch((err) => {
           failed(res, [], err.message)
         });
@@ -47,7 +47,7 @@ const airlines = {
   getDetail: (req, res) => {
     try {
       const id = req.params.id
-      airlinesModel.getDetail(id)
+      flightModel.getDetail(id)
         .then((result) => {
           if (result.length === 0) {
             notfound(res, [], 'Data not found!')
@@ -73,9 +73,9 @@ const airlines = {
         } else {
           const body = req.body;
           body.image = !req.file.filename ? req.file : req.file.filename
-          airlinesModel.insert(body)
+          flightModel.insert(body)
             .then((result) => {
-              redisClient.del("airlines")
+              redisClient.del("flight")
               success(res, result, `Insert data success!`)
             }).catch((err) => {
               failed(res, [], err.message)
@@ -89,65 +89,78 @@ const airlines = {
 
   update: (req, res) => {
     try {
-      upload.single('image')(req, res, (err) => {
-        if (err) {
-          if (err.code === 'LIMIT_FILE_SIZE') {
-            failed(res, [], 'Image must less 2mb')
-          } else {
-            failed(res, [], err.message)
-          }
-        } else {
-          const id = req.params.id
-          const body = req.body
-          airlinesModel.getDetail(id)
-            .then((response) => {
-              const responses = response[0].image
-              const oldImage = responses
-              body.image = !req.file ? oldImage : req.file.filename
-              if (body.image !== oldImage) {
-                fs.unlink(`src/uploads/${oldImage}`, (err) => {
-                  if (err) {
-                    failed(res, [], err.message)
-                  } else {
-                    airlinesModel.update(body, id)
-                      .then((result) => {
-                        success(res, result, 'Update success')
-                      })
-                      .catch((err) => {
-                        failed(res, [], err.message)
-                      })
-                  }
-                })
-              } else {
-                airlinesModel.update(body, id)
-                  .then((result) => {
-                    success(res, result, 'Update data success')
-                  })
-                  .catch((err) => {
-                    failed(res, [], err.message)
-                  })
-              }
-            })
-        }
-      })
+      const id = req.params.id
+      const body = req.body
+      body.image = req.file.filename
+      flightModel.getDetail(id)
+        .then((response) => {
+          const oldImage = response[0].image
+          fs.unlink(`src/uploads/${oldImage}`, (err) => {
+            if (err) {
+              failed(res, [], err.message)
+            } else {
+              flightModel.update(body, id)
+                .then((result) => {
+                  success(res, result, 'Data Updated!')
+                }).catch((error) => {
+                  failed(res, [], error.message)
+                });
+            }
+          })
+        }).catch((err) => {
+          failed(res, [], err.message)
+        });
     } catch (error) {
-      failed(res, [], 'Internal Server Error')
+      failed(res, [], error.message)
     }
   },
 
+  // update: (req, res) => {
+  //   try {
+  //     const id = req.params.id
+  //     const body = req.body
+  //     flightModel.getDetail(id)
+  //       .then((response) => {
+  //         body.image = req.file.filename
+  //         const oldImage = response[0].image
+  //         let imageName = null
+  //         if (!body.image) {
+  //           imageName = oldImage
+  //         } else {
+  //           imageName = body.image
+  //           fs.unlink(`src/uploads/${oldImage}`, (err) => {
+  //             if (err) {
+  //               failed(res, [], err.message)
+  //             } else {
+  //               flightModel.update(body, id)
+  //                 .then((result) => {
+  //                   success(res, result, 'Data Updated!')
+  //                 }).catch((error) => {
+  //                   failed(res, [], error.message)
+  //                 });
+  //             }
+  //           })
+  //         }
+  //       }).catch((err) => {
+  //         failed(res, [], err.message)
+  //       });
+  //   } catch (error) {
+  //     failed(res, [], error.message)
+  //   }
+  // },
   delete: (req, res) => {
     try {
       const id = req.params.id
-      airlinesModel.getDetail(id)
+      flightModel.getDetail(id)
         .then((results) => {
           const dataImage = results[0].image
           fs.unlink(`src/uploads/${dataImage}`, (err) => {
             if (err) {
               failed(res, [], err.message)
             } else {
-              airlinesModel.delete(id)
+              flightModel.delete(id)
                 .then((result) => {
-                  redisClient.del("airlines")
+                  redisClient.del("flight")
                   success(res, result, `ID ${id} success deleted!`)
                 }).catch((err) => {
                   failed(res, [], err.message)
@@ -162,4 +175,4 @@ const airlines = {
     }
   },
 }
-module.exports = airlines
+module.exports = flight
