@@ -9,12 +9,14 @@ const fs = require('fs')
 
 const users = {
     register: async (req, res, next) => {
-        const body = req.body
-        const password = req.body.password
-        const salt = await bcrypt.genSalt(10)
-        const hashPassword = await bcrypt.hash(password, salt)
-        userModel.register(body, hashPassword).then((result) => {
-                const token = jwt.sign({ email: data.email }, PRIVATEKEY)
+        try {
+            const body = req.body
+            const password = req.body.password
+            const salt = await bcrypt.genSalt(10)
+            const hashPassword = await bcrypt.hash(password, salt)
+            const img = "default.jpg"
+            userModel.register(body, hashPassword, img).then((result) => {
+                const token = jwt.sign({ email: body.email }, PRIVATEKEY)
                 const output = `
                     <center><h1>HELLO ${req.body.email}</h1>
                     <h3>Thank you for registration</h3>
@@ -29,7 +31,7 @@ const users = {
                         user: env.EMAIL,
                         pass: env.PASSWORD_EMAIL
                     }
-                });
+                })
 
                 let Mail = {
                     from: 'ankasa.com',
@@ -37,12 +39,19 @@ const users = {
                     subject: "Verification Email",
                     text: "Plaintext version of the message",
                     html: output
-                };
+                }
+
                 transporter.sendMail(Mail)
                 success(res, result, 'Please check your email to activation')
-            }).catch(() => {
-                failed(res, [], 'Email Already Exist')
+            }).catch((err) => {
+                if (err.message = 'Duplicate entry') {
+                    failed(res, [], 'Email Already Exist')
+                }
+                // failed(res, [], err.message)
             })
+        } catch (error) {
+            failed(res, [], 'Internal Server Error')
+        }
     },
     active: (req, res) => {
         const token = req.params.token
@@ -53,7 +62,8 @@ const users = {
                 const data = jwt.decode(token)
                 const email = data.email
                 userModel.updateUser(email).then((result) => {
-                    success(res, result, 'Activation success')
+                    // success(res, result, 'Activation success')
+                    res.render('index', { email })
                 }).catch(err => {
                     failed(res, [], err.message)
                 })
