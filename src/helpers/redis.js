@@ -59,5 +59,16 @@ module.exports = {
         next()
       }
     })
+  },
+
+  getAllCities: (req, res, next) => {
+    redisClient.get('cities', (err, reply) => {
+      const data = JSON.parse(reply)
+      if (reply) {
+        success(res, data, 'Get data from redis success')
+      } else {
+        next()
+      }
+    })
   }
 }

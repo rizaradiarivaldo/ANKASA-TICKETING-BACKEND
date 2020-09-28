@@ -3,11 +3,15 @@ const upload = require('../helpers/uploads')
 const { success, failed, notfound } = require('../helpers/response')
 const fs = require('fs')
 
+const redis = require('redis')
+const redisClient = redis.createClient()
+
 const cities = {
     getAll: (req, res) => {
         try {
             citiesModel.getAll().then((result) => {
                 success(res, result, 'Get all data success')
+                redisClient.set('cities', JSON.stringify(result))
             }).catch((err) => {
                 failed(res, [], err.message)
             })
@@ -47,6 +51,7 @@ const cities = {
                         failed(res, [], 'Image must have value')
                     } else {
                         citiesModel.insert(body).then((result) => {
+                            redisClient.del('cities')
                             success(res, result, 'Insert data success !')
                         }).catch((err) => {
                             failed(res, [], err.message)
@@ -81,6 +86,7 @@ const cities = {
                                     failed(res, [], err.message)
                                 } else {
                                     citiesModel.update(body, id).then((result) => {
+                                        redisClient.del('cities')
                                         success(res, result, 'Update success')
                                     }).catch((err) => {
                                         failed(res, [], err.message)
@@ -89,6 +95,7 @@ const cities = {
                             })
                         } else {
                             citiesModel.update(body, id).then((result) => {
+                                redisClient.del('cities')
                                 success(res, result, 'Update success')
                             }).catch((err) => {
                                 failed(res, [], err.message)
@@ -111,6 +118,7 @@ const cities = {
                         failed(res, [], err.message)
                     } else {
                         citiesModel.delete(id).then((result) => {
+                            redisClient.del('cities')
                             success(res, result, 'Delete data success')
                         }).catch((err) => {
                             failed(res, [], err.message)
