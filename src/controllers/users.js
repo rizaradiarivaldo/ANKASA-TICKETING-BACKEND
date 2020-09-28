@@ -54,76 +54,83 @@ const users = {
         }
     },
     active: (req, res) => {
-        const token = req.params.token
-        jwt.verify(token, PRIVATEKEY, (err, decode) => {
-            if (err) {
-              failed(res, [], 'Failed authorization!')
-            } else {
-                const data = jwt.decode(token)
-                const email = data.email
-                userModel.updateUser(email).then((result) => {
-                    // success(res, result, 'Activation success')
-                    res.render('index', { email })
-                }).catch(err => {
-                    failed(res, [], err.message)
-                })
-            }
-        })
+        try {
+            const token = req.params.token
+            jwt.verify(token, PRIVATEKEY, (err, decode) => {
+                if (err) {
+                failed(res, [], 'Failed authorization!')
+                } else {
+                    const data = jwt.decode(token)
+                    const email = data.email
+                    userModel.updateUser(email).then((result) => {
+                        res.render('index', { email })
+                    }).catch(err => {
+                        failed(res, [], err.message)
+                    })
+                }
+            })
+        } catch (error) {
+            failed(res, [], 'Internal Server Error')
+        }
     },
     login: async (req, res) => {
-        const body = req.body
-        userModel.login(body).then(async (result) => {
-            if (!result[0]) {
-                failed(res, [], 'Username not registered, Please register!')
-            } else {
-                const results = result[0]
-                const password = results.password
-                const userRefreshToken = results.refreshToken
-                const isPasswordMatch = await bcrypt.compare(body.password, password)
-
-                const dataUser = {
-                    username: results.username,
-                    role: results.role
-                }
-
-                if (results.status === 0) {
-                    failed(res, [], 'Activate your email first')
+        try {
+            const body = req.body
+            userModel.login(body).then(async (result) => {
+                if (!result[0]) {
+                    failed(res, [], 'Username not registered, Please register!')
                 } else {
-                    if (!isPasswordMatch) {
-                        failed(res, [], 'Password is wrong')
+                    const results = result[0]
+                    const password = results.password
+                    const userRefreshToken = results.refreshToken
+                    const isPasswordMatch = await bcrypt.compare(body.password, password)
+
+                    const dataUser = {
+                        username: results.username,
+                        role: results.role
+                    }
+
+                    if (results.status === 0) {
+                        failed(res, [], 'Activate your email first')
                     } else {
-                        jwt.sign({ dataUser }, PRIVATEKEY, {expiresIn: 3600},
-                            (err, token) => {
-                            if (err) {
-                                    console.log(err)
-                            } else {
-                                if (userRefreshToken === null) {
-                                    const refreshToken = jwt.sign({ dataUser }, REFRESHTOKEN)
-                                    const token = newerToken(dataUser)
-                                    userModel.updateRefreshToken(refreshToken, id).then((result) => {
+                        if (!isPasswordMatch) {
+                            failed(res, [], 'Password is wrong')
+                        } else {
+                            jwt.sign({ dataUser }, PRIVATEKEY, {expiresIn: 3600},
+                                (err, token) => {
+                                if (err) {
+                                        console.log(err)
+                                } else {
+                                    if (userRefreshToken === null) {
+                                        const refreshToken = jwt.sign({ dataUser }, REFRESHTOKEN)
+                                        const token = newerToken(dataUser)
+                                        userModel.updateRefreshToken(refreshToken, id).then((result) => {
+                                            const data = {
+                                                token: token,
+                                                refreshToken: refreshToken
+                                            }
+                                            tokenResult(res, data, 'Login successful')
+                                        }).catch((err) => {
+                                            failed(res, [], err.message)
+                                        })
+                                    } else {
                                         const data = {
                                             token: token,
-                                            refreshToken: refreshToken
+                                            refreshToken: userRefreshToken
                                         }
-                                        tokenResult(res, data, 'Login Sukses')
-                                    }).catch((err) => {
-                                        failed(res, [], err.message)
-                                    })
-                                } else {
-                                    const data = {
-                                        token: token,
-                                        refreshToken: userRefreshToken
+                                        tokenResult(res, data, 'Login successful')
                                     }
-                                    tokenResult(res, data, 'Login sukses')
                                 }
-                            }
-                        })
+                            })
+                        }
                     }
                 }
-            }
-        }).catch(() => {
-            failed(res, [], 'Username salah')
-        })
+            }).catch(() => {
+                failed(res, [], 'Username is wrong')
+            })
+        } catch (error) {
+            failed(res, [], 'Internal Server Error')
+        }
     },
     updateData: (req, res) => {
         try {
@@ -175,25 +182,29 @@ const users = {
                 }
             })
         } catch (error) {
-            
+            failed(res, [], 'Internal Server Error')
         }
     },
     requestToken: (req, res) => {
-        const refreshToken = req.body.refreshToken
-        userModel.checkRefreshToken(refreshToken).then((result) => {
-            if (result.length >= 1) {
-                const user = result[0]
-                const newToken = jwt.sign({ username: user.username }, PRIVATEKEY, {expiresIn: 36000})
-                const data = {
-                    newToken: newToken
+        try {
+            const refreshToken = req.body.refreshToken
+            userModel.checkRefreshToken(refreshToken).then((result) => {
+                if (result.length >= 1) {
+                    const user = result[0]
+                    const newToken = jwt.sign({ username: user.username }, PRIVATEKEY, {expiresIn: 36000})
+                    const data = {
+                        newToken: newToken
+                    }
+                    tokenResult(res, data, 'Refresh token success')
+                } else {
+                    failed(res, [], 'Refresh token not found')
                 }
-                tokenResult(res, data, 'Refresh Token Sukses')
-            } else {
-                failed(res, [], 'Refresh token tidak ditemukan')
-            }
-        }).catch((err) => {
-            failed(res, [], err.message)
-        })
+            }).catch((err) => {
+                failed(res, [], err.message)
+            })
+        } catch (error) {
+            failed(res, [], 'Internal Server Error')
+        }
     }
 }
 
