@@ -24,7 +24,7 @@ const flight = {
           const totalRows = result[0].count;
           const meta = {
             total: totalRows,
-            totalPage: Math.ceil(totalRows / limit),  
+            totalPage: Math.ceil(totalRows / limit),
             page: page,
           };
           successWithMeta(res, result, meta, "Get all data success");
