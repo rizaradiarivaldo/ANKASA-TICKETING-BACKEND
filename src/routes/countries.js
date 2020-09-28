@@ -1,9 +1,10 @@
 const express = require('express')
 const countriesController = require('../controllers/countries')
+const { getAllCountry } = require('../helpers/redis')
 const router = express.Router()
 
 router
-  .get('/getAll', countriesController.getAll)
+  .get('/getAll', getAllCountry, countriesController.getAll)
   .get('/getDetail/:id', countriesController.getDetail)
   .post('/insert', countriesController.insert)
   .patch('/update/:id', countriesController.update)

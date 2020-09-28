@@ -43,52 +43,21 @@ module.exports = {
     redisClient.get('booking', (err, reply) => {
       const data = JSON.parse(reply)
       if (reply) {
-        success(res, reply, 'Get data from redis success')
+        success(res, data, 'Get data from redis success')
+      } else {
+        next()
+      }
+    })
+  },
+
+  getAllCountry: (req, res, next) => {
+    redisClient.get('countries', (err, reply) => {
+      const data = JSON.parse(reply)
+      if (reply) {
+        success(res, data, 'Get data from redis success')
       } else {
         next()
       }
     })
   }
-
-  // getDetailProduct: (req, res, next) => {
-  //   const id = req.params.id
-  //   if (id) {
-  //     redisClient.get('products', (err, reply) => {
-  //       const data = JSON.parse(reply)
-  //       const dataFilter = data.filter(e => e.id_product == id)
-  //       if (dataFilter <= 0) {
-  //         failed(res, [], 'Data Not Found!')
-  //       } else {
-  //         success(res, dataFilter, `Get data category by ID: ${id} from redis success!`)
-  //       }
-  //     })
-  //   } else {
-  //     next()
-  //   }
-  // },
-
-  // getCategory: (req, res, next) => {
-  //   const categoryname = !req.query.category ? false : req.query.category;
-  //   const Sortby = !req.query.sortby ? null : req.query.sortby
-  //   redisClient.get('category', (err, reply) => {
-  //     const data = JSON.parse(reply)
-  //     if (categoryname) {
-  //       const dataFilter = data.filter(e => e.name.toLowerCase().includes(categoryname.toLowerCase()))
-  //       if (dataFilter <= 0) {
-  //         failed(res, [], 'Data Not Found!')
-  //       } else {
-  //         success(res, dataFilter, 'Get data by Category Name from redis success!')
-  //       }
-  //     } else if (Sortby === 'category') {
-  //       const sort = data.sort((a, b) => a.category.localeCompare(b.category));
-  //       success(res, sort, 'Get all data sort by Category Name')
-  //     } else if (reply) {
-  //       const result = JSON.parse(reply)
-  //       successWithMeta(res, result, null, 'Get all data category from redis success!')
-  //     }
-  //     else {
-  //       next()
-  //     }
-  //   })
-  // },
 }
