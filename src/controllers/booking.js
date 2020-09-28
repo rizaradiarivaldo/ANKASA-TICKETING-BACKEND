@@ -1,13 +1,7 @@
 const bookingModel = require('../models/booking')
-const {
-    success,
-    failed
-} = require('../helpers/response')
+const { success, failed } = require('../helpers/response')
 
 const redis = require('redis')
-const {
-    result
-} = require('lodash')
 const redisClient = redis.createClient()
 
 const booking = {
@@ -16,7 +10,7 @@ const booking = {
             const body = req.body
             bookingModel.insert(body).then((result) => {
                 redisClient.del('booking')
-                success(res, result, 'Booking sukses')
+                success(res, result, 'Booking success')
             }).catch((err) => {
                 failed(res, [], err.message)
             })
@@ -30,7 +24,7 @@ const booking = {
             const body = req.body
             bookingModel.update(body, id).then((result) => {
                 redisClient.del('booking')
-                success(res, result, 'Update sukses')
+                success(res, result, 'Update success')
             })
         } catch (error) {
             failed(res, [], 'Internal Server Error')
@@ -39,7 +33,7 @@ const booking = {
     getAll: (req, res) => {
         try {
             bookingModel.getAll().then((result) => {
-                success(res, result, 'Get all data sukses')
+                success(res, result, 'Get all data success')
             }).catch((err) => {
                 failed(res, [], err.message)
             })
@@ -57,7 +51,7 @@ const booking = {
         try {
             const id = req.params.id
             bookingModel.getDetail(id).then((result) => {
-                success(res, result, 'Get detail sukses')
+                success(res, result, 'Get detail success')
             }).catch((err) => {
                 failed(res, [], err.message)
             })
@@ -70,7 +64,7 @@ const booking = {
             const id = req.params.id
             bookingModel.delete(id).then((result) => {
                 redisClient.del('booking')
-                success(res, result, 'Hapus sukses')
+                success(res, result, 'Delete success')
             }).catch((err) => {
                 failed(res, [], err.message)
             })
