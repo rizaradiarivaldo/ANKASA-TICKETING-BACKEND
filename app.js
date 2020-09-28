@@ -6,6 +6,7 @@ const airlinesRouter = require('./src/routes/airlines')
 // const flightRouter = require('./src/routes/flight')
 const bookingRouter = require('./src/routes/booking')
 const countriesRouter = require('./src/routes/countries')
+const citiesRouter = require('./src/routes/cities')
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.use('/airlines', airlinesRouter);
 // app.use('/flight', flightRouter)
 app.use('/booking', bookingRouter)
 app.use('/countries', countriesRouter)
+app.use('/cities', citiesRouter)
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)

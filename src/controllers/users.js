@@ -9,11 +9,11 @@ const fs = require('fs')
 
 const users = {
     register: async (req, res, next) => {
-        const data = req.body
+        const body = req.body
         const password = req.body.password
         const salt = await bcrypt.genSalt(10)
-        const generate = await bcrypt.hash(password, salt)
-        userModel.register(data, generate).then((result) => {
+        const hashPassword = await bcrypt.hash(password, salt)
+        userModel.register(body, hashPassword).then((result) => {
                 const token = jwt.sign({ email: data.email }, PRIVATEKEY)
                 const output = `
                     <center><h1>HELLO ${req.body.email}</h1>
@@ -88,7 +88,6 @@ const users = {
                                     console.log(err)
                             } else {
                                 if (userRefreshToken === null) {
-                                    // const id = results.id
                                     const refreshToken = jwt.sign({ dataUser }, REFRESHTOKEN)
                                     const token = newerToken(dataUser)
                                     userModel.updateRefreshToken(refreshToken, id).then((result) => {
