@@ -34,7 +34,7 @@ const users = {
                 })
 
                 let Mail = {
-                    from: 'ankasa.com',
+                    from: '"Ankasa"',
                     to: req.body.email,
                     subject: "Verification Email",
                     text: "Plaintext version of the message",
@@ -46,8 +46,9 @@ const users = {
             }).catch((err) => {
                 if (err.message = 'Duplicate entry') {
                     failed(res, [], 'Email Already Exist')
+                } else {
+                    failed(res, [], err.message)
                 }
-                // failed(res, [], err.message)
             })
         } catch (error) {
             failed(res, [], 'Internal Server Error')
@@ -200,7 +201,83 @@ const users = {
             res.json({ newtoken: newtoken })
           })
         }
-    }
+    },
+
+    // resetPassword: (req, res) => {
+    //     try {
+    //         const email = req.body.email
+    //         userModel.searchEmail(email).then((result) => {
+    //             if (!result[0]) {
+    //                 failed(res, [], 'Email invalid')
+    //             } else {
+    //                 const key = Math.floor(Math.random(111999777) * Math.floor(222999777))
+    //                 userModel.updateKeyReset(key, email).then((result) => {
+    //                     success(res, result, 'Check your email for reset password')
+                        
+    //                     const output = `<center>
+    //                         <h4>Reset Password</h4>
+    //                         <p>You can confirm email by clicking the link below
+    //                             <a href="">Reset Password</a>
+    //                         </p>
+    //                         </center>`
+                        
+    //                         let transporter = nodemailer.createTransport({
+    //                             host: 'smtp.gmail.com',
+    //                             port: 587,
+    //                             secure: false,
+    //                             requireTLS: true,
+    //                             auth: {
+    //                                 user: env.EMAIL,
+    //                                 pass: env.PASSWORD_EMAIL
+    //                             }
+    //                         })
+
+    //                         let Mail = {
+    //                             from: '"Ankasa"',
+    //                             to: req.body.email,
+    //                             subject: "Verification Email",
+    //                             text: "Plaintext version of the message",
+    //                             html: output
+    //                         }
+    //                         transporter.sendMail(Mail)
+    //                 }).catch((err) => {
+    //                     failed(res, [], err.message)
+    //                 })
+    //             }
+    //         }).catch((err) => {
+    //             failed(res, [], err.message)
+    //         })
+    //     } catch (error) {
+    //         failed(res, [], 'Internal Server Error')
+    //     }
+    // },
+
+    // confirmPassword: async (req, res) => {
+    //     try {
+    //         const body = req.body
+    //         const key = req.body.key
+
+    //         if (body.password !== body.confirmPwd) {
+    //             failed(res, [], 'password and confirmation password do not match')
+    //         } else {
+    //             if (!key) {
+    //                 failed(res, [], 'Key reset not found')
+    //             } else {
+    //                 const password = body.password
+    //                 const salt = await bcrypt.genSalt(1)
+    //                 const hashPwd = await bcrypt.hash(password, salt)
+
+    //                 userModel.setNewPassword(hashPwd, key).then((result) => {
+    //                     success(res, result, 'Reset password success')
+    //                 }).catch((err) => {
+    //                     failed(res, [], err.message)
+    //                 })
+    //             }
+    //         }
+    //     } catch (error) {
+    //         failed(res, [], 'Internal Server Error')
+    //     }
+    // }
 }
 
 const newerToken = (userData) => {

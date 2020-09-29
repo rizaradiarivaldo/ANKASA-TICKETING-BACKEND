@@ -9,5 +9,7 @@ router
     .post('/refreshToken', userController.requestToken)
     .get('/active/:token', userController.active)
     .patch('/update/:id', userController.updateData)
+    // .post('/reset', userController.resetPassword)
+    // .post('/confirm', userController.confirmPassword)
 
 module.exports = router
