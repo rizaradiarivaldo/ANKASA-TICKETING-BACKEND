@@ -62,84 +62,26 @@ const flight = {
     try {
       const id = req.params.id
       const body = req.body
-      body.image = req.file.filename
-      flightModel.getDetail(id)
-        .then((response) => {
-          const oldImage = response[0].image
-          fs.unlink(`src/uploads/${oldImage}`, (err) => {
-            if (err) {
-              failed(res, [], err.message)
-            } else {
-              flightModel.update(body, id)
-                .then((result) => {
-                  success(res, result, 'Data Updated!')
-                }).catch((error) => {
-                  failed(res, [], error.message)
-                });
-            }
-          })
-        }).catch((err) => {
-          failed(res, [], err.message)
+      flightModel.update(body, id)
+        .then((result) => {
+          redisClient.del("flight")
+          success(res, result, 'Data Updated!')
+        }).catch((error) => {
+          failed(res, [], error.message)
         });
     } catch (error) {
       failed(res, [], error.message)
     }
   },
-
-  // update: (req, res) => {
-  //   try {
-  //     const id = req.params.id
-  //     const body = req.body
-  //     flightModel.getDetail(id)
-  //       .then((response) => {
-  //         body.image = req.file.filename
-  //         const oldImage = response[0].image
-  //         let imageName = null
-  //         if (!body.image) {
-  //           imageName = oldImage
-  //         } else {
-  //           imageName = body.image
-  //           fs.unlink(`src/uploads/${oldImage}`, (err) => {
-  //             if (err) {
-  //               failed(res, [], err.message)
-  //             } else {
-  //               flightModel.update(body, id)
-  //                 .then((result) => {
-  //                   success(res, result, 'Data Updated!')
-  //                 }).catch((error) => {
-  //                   failed(res, [], error.message)
-  //                 });
-  //             }
-  //           })
-  //         }
-  //       }).catch((err) => {
-  //         failed(res, [], err.message)
-  //       });
-  //   } catch (error) {
-  //     failed(res, [], error.message)
-  //   }
-  // },
   delete: (req, res) => {
     try {
       const id = req.params.id
-      flightModel.getDetail(id)
-        .then((results) => {
-          const dataImage = results[0].image
-          fs.unlink(`src/uploads/${dataImage}`, (err) => {
-            if (err) {
-              failed(res, [], err.message)
-            } else {
-              flightModel.delete(id)
-                .then((result) => {
-                  redisClient.del("flight")
-                  success(res, result, `ID ${id} success deleted!`)
-                }).catch((err) => {
-                  failed(res, [], err.message)
-                });
-            }
-          })
+      flightModel.delete(id)
+        .then((result) => {
+          redisClient.del("flight")
+          success(res, result, `ID ${id} success deleted!`)
         }).catch((err) => {
-          console.log(err)
+          failed(res, [], err.message)
         });
     } catch (error) {
       failed(res, [], 'Internal Server Error')
