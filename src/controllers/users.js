@@ -77,8 +77,8 @@ const users = {
         try {
             const body = req.body
             const usersData = {
-                username: req.body.username,
-                password: req.body.password
+                username: body.username,
+                password: body.password
             }
             userModel.login(usersData).then(async (result) => {
                 const results = result[0]
@@ -122,60 +122,15 @@ const users = {
                             failed(res, [], 'Activation needed!')
                         }
                     } else {
-                        failed(res, [], 'Email or Password wrong, check again!')
+                        failed(res, [], err.message)
                     }
                 }
-                // if (!result[0]) {
-                //     failed(res, [], 'Username not registered, Please register!')
-                // } else {
-                //     const results = result[0]
-                //     const password = results.password
-                //     const userRefreshToken = results.refreshToken
-                //     const isPasswordMatch = await bcrypt.compare(body.password, password)
-
-                //     const dataUser = {
-                //         username: results.username,
-                //         role: results.role
-                //     }
-
-                //     if (results.status === 0) {
-                //         failed(res, [], 'Activate your email first')
-                //     } else {
-                //         if (!isPasswordMatch) {
-                //             failed(res, [], 'Password is wrong')
-                //         } else {
-                //             jwt.sign({  }, PRIVATEKEY, {expiresIn: 15},
-                //                 (err, token) => {
-                //                 if (err) {
-                //                         console.log(err)
-                //                 } else {
-                //                     if (userRefreshToken === null) {
-                //                         const id = results.id
-                //                         const refreshToken = jwt.sign({ id }, REFRESHTOKEN)
-                //                         const tokens = newerToken(dataUser)
-                //                         userModel.updateRefreshToken(refreshToken, id).then((result) => {
-                //                             const data = {
-                //                                 token: token,
-                //                                 refreshToken: refreshToken
-                //                             }
-                //                             tokenResult(res, data, 'Login successful')
-                //                         }).catch((err) => {
-                //                             failed(res, [], err.message)
-                //                         })
-                //                     } else {
-                //                         const data = {
-                //                             token: token,
-                //                             refreshToken: userRefreshToken
-                //                         }
-                //                         tokenResult(res, data, 'Login successful')
-                //                     }
-                //                 }
-                //             })
-                //         }
-                //     }
-                // }
-            }).catch(() => {
-                failed(res, [], err.message)
+            }).catch((err) => {
+                if (err.message === `Cannot read property 'id' of undefined`) {
+                    failed(res, [], 'Username or Password wrong, check again!')
+                } else {
+                    failed(res, [], err.message)
+                }
             })
         } catch (error) {
             failed(res, [], 'Internal Server Error')
@@ -234,28 +189,6 @@ const users = {
             failed(res, [], 'Internal Server Error')
         }
     },
-    // requestToken: (req, res) => {
-    //     try {
-    //         const refreshToken = req.body.refreshToken
-    //         userModel.checkRefreshToken(refreshToken).then((result) => {
-    //             // console.log(result)
-    //             if (result.length >= 1) {
-    //                 const user = result[0]
-    //                 const newToken = jwt.sign({ username: user.username }, PRIVATEKEY, {expiresIn: 36000})
-    //                 const data = {
-    //                     newToken: newToken
-    //                 }
-    //                 tokenResult(res, data, 'Refresh token success')
-    //             } else {
-    //                 failed(res, [], 'Refresh token not found')
-    //             }
-    //         }).catch((err) => {
-    //             failed(res, [], err.message)
-    //         })
-    //     } catch (error) {
-    //         failed(res, [], 'Internal Server Error')
-    //     }
-    // }
 
     requestToken: (req, res) => {
         const tokenReq = req.body.refreshToken
@@ -265,10 +198,9 @@ const users = {
           jwt.verify(tokenReq, REFRESHTOKEN, (err, result) => {
             const newtoken = newerToken({ username: result.username, role: result.role })
             res.json({ newtoken: newtoken })
-            // console.log(newtoken)
           })
         }
-      }
+    }
 }
 
 const newerToken = (userData) => {
