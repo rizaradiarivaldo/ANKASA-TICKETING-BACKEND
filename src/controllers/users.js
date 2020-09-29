@@ -76,57 +76,106 @@ const users = {
     login: async (req, res) => {
         try {
             const body = req.body
-            userModel.login(body).then(async (result) => {
-                if (!result[0]) {
-                    failed(res, [], 'Username not registered, Please register!')
+            const usersData = {
+                username: req.body.username,
+                password: req.body.password
+            }
+            userModel.login(usersData).then(async (result) => {
+                const results = result[0]
+                const id = results.id
+
+                if (!results) {
+                    failed(res, [], 'Email not registered, Please register!')
                 } else {
-                    const results = result[0]
                     const password = results.password
-                    const userRefreshToken = results.refreshToken
-                    const isPasswordMatch = await bcrypt.compare(body.password, password)
 
-                    const dataUser = {
-                        username: results.username,
-                        role: results.role
-                    }
+                    const isMatch = bcrypt.compareSync(usersData.password, password)
 
-                    if (results.status === 0) {
-                        failed(res, [], 'Activate your email first')
-                    } else {
-                        if (!isPasswordMatch) {
-                            failed(res, [], 'Password is wrong')
-                        } else {
-                            jwt.sign({ dataUser }, PRIVATEKEY, {expiresIn: 3600},
-                                (err, token) => {
-                                if (err) {
-                                        console.log(err)
-                                } else {
-                                    if (userRefreshToken === null) {
-                                        const refreshToken = jwt.sign({ dataUser }, REFRESHTOKEN)
-                                        const token = newerToken(dataUser)
-                                        userModel.updateRefreshToken(refreshToken, id).then((result) => {
-                                            const data = {
-                                                token: token,
-                                                refreshToken: refreshToken
-                                            }
-                                            tokenResult(res, data, 'Login successful')
-                                        }).catch((err) => {
-                                            failed(res, [], err.message)
-                                        })
-                                    } else {
-                                        const data = {
-                                            token: token,
-                                            refreshToken: userRefreshToken
-                                        }
-                                        tokenResult(res, data, 'Login successful')
+                    if (isMatch) {
+                        if (results.status === 1) {
+                            const dataUser = {
+                                username: results.username,
+                                role: results.role
+                            }
+
+                            const refreshToken = jwt.sign(dataUser, REFRESHTOKEN)
+                            const token = newerToken(dataUser)
+
+                            if (results.refreshToken === null) {
+                                userModel.updateRefreshToken(refreshToken, id).then((result) => {
+                                    const data = {
+                                        token,
+                                        refreshToken: refreshToken
                                     }
+                                    tokenResult(res, data, 'Login success')
+                                }).catch((err) => {
+                                    failed(res, [], err.message)
+                                })
+                            } else {
+                                const data = {
+                                    token,
+                                    refreshToken: refreshToken
                                 }
-                            })
+                                tokenResult(res, data, 'Login successful')
+                            }
+                        } else {
+                            failed(res, [], 'Activation needed!')
                         }
+                    } else {
+                        failed(res, [], 'Email or Password wrong, check again!')
                     }
                 }
+                // if (!result[0]) {
+                //     failed(res, [], 'Username not registered, Please register!')
+                // } else {
+                //     const results = result[0]
+                //     const password = results.password
+                //     const userRefreshToken = results.refreshToken
+                //     const isPasswordMatch = await bcrypt.compare(body.password, password)
+
+                //     const dataUser = {
+                //         username: results.username,
+                //         role: results.role
+                //     }
+
+                //     if (results.status === 0) {
+                //         failed(res, [], 'Activate your email first')
+                //     } else {
+                //         if (!isPasswordMatch) {
+                //             failed(res, [], 'Password is wrong')
+                //         } else {
+                //             jwt.sign({  }, PRIVATEKEY, {expiresIn: 15},
+                //                 (err, token) => {
+                //                 if (err) {
+                //                         console.log(err)
+                //                 } else {
+                //                     if (userRefreshToken === null) {
+                //                         const id = results.id
+                //                         const refreshToken = jwt.sign({ id }, REFRESHTOKEN)
+                //                         const tokens = newerToken(dataUser)
+                //                         userModel.updateRefreshToken(refreshToken, id).then((result) => {
+                //                             const data = {
+                //                                 token: token,
+                //                                 refreshToken: refreshToken
+                //                             }
+                //                             tokenResult(res, data, 'Login successful')
+                //                         }).catch((err) => {
+                //                             failed(res, [], err.message)
+                //                         })
+                //                     } else {
+                //                         const data = {
+                //                             token: token,
+                //                             refreshToken: userRefreshToken
+                //                         }
+                //                         tokenResult(res, data, 'Login successful')
+                //                     }
+                //                 }
+                //             })
+                //         }
+                //     }
+                // }
             }).catch(() => {
-                failed(res, [], 'Username is wrong')
+                failed(res, [], err.message)
             })
         } catch (error) {
             failed(res, [], 'Internal Server Error')
@@ -185,31 +234,45 @@ const users = {
             failed(res, [], 'Internal Server Error')
         }
     },
+    // requestToken: (req, res) => {
+    //     try {
+    //         const refreshToken = req.body.refreshToken
+    //         userModel.checkRefreshToken(refreshToken).then((result) => {
+    //             // console.log(result)
+    //             if (result.length >= 1) {
+    //                 const user = result[0]
+    //                 const newToken = jwt.sign({ username: user.username }, PRIVATEKEY, {expiresIn: 36000})
+    //                 const data = {
+    //                     newToken: newToken
+    //                 }
+    //                 tokenResult(res, data, 'Refresh token success')
+    //             } else {
+    //                 failed(res, [], 'Refresh token not found')
+    //             }
+    //         }).catch((err) => {
+    //             failed(res, [], err.message)
+    //         })
+    //     } catch (error) {
+    //         failed(res, [], 'Internal Server Error')
+    //     }
+    // }
+
     requestToken: (req, res) => {
-        try {
-            const refreshToken = req.body.refreshToken
-            userModel.checkRefreshToken(refreshToken).then((result) => {
-                if (result.length >= 1) {
-                    const user = result[0]
-                    const newToken = jwt.sign({ username: user.username }, PRIVATEKEY, {expiresIn: 36000})
-                    const data = {
-                        newToken: newToken
-                    }
-                    tokenResult(res, data, 'Refresh token success')
-                } else {
-                    failed(res, [], 'Refresh token not found')
-                }
-            }).catch((err) => {
-                failed(res, [], err.message)
-            })
-        } catch (error) {
-            failed(res, [], 'Internal Server Error')
+        const tokenReq = req.body.refreshToken
+        if (!tokenReq) {
+          failed(res, [], 'Token must have a value!')
+        } else {
+          jwt.verify(tokenReq, REFRESHTOKEN, (err, result) => {
+            const newtoken = newerToken({ username: result.username, role: result.role })
+            res.json({ newtoken: newtoken })
+            // console.log(newtoken)
+          })
         }
-    }
+      }
 }
 
 const newerToken = (userData) => {
-    return jwt.sign(userData, PRIVATEKEY, { expiresIn: '1h' })
+    return jwt.sign(userData, PRIVATEKEY, { expiresIn: 3600 })
 }
 
 module.exports = users
