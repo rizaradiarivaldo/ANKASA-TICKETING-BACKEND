@@ -1,11 +1,11 @@
 const express = require('express')
 const flightController = require('../controllers/flight')
-// const { getFlight } = require('../helpers/redis')
+const { getAllFlight } = require('../helpers/redis')
 const router = express.Router();
 const upload = require("../helpers/uploads");
 
 router
-  .get("/getall", flightController.getAll)
+  .get("/getall",getAllFlight, flightController.getAll)
   .get("/getdetail/:id", flightController.getDetail)
   .post("/insert", flightController.insert)
   .delete("/delete/:id", flightController.delete)

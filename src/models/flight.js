@@ -39,7 +39,7 @@ const flight = {
 
   insert: (data) => {
     return new Promise((resolve, reject) => {
-      db.query(`INSERT INTO flight (name) VALUES ('${data.name}')`, (err, result) => {
+      db.query(`INSERT INTO flight SET ?`, data, (err, result) => {
         if (err) {
           reject(new Error(err));
         } else {

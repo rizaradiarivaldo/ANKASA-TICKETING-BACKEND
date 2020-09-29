@@ -9,33 +9,15 @@ const redisClient = redis.createClient();
 const flight = {
   getAll: (req, res) => {
     try {
-      const name = !req.query.name ? "" : req.query.name;
-      const sort = !req.query.sort ? "id" : req.query.sort;
-      const typesort = !req.query.typesort ? "ASC" : req.query.typesort;
-
-      const limit = !req.query.limit ? 10 : parseInt(req.query.limit);
-      const page = !req.query.page ? 1 : parseInt(req.query.page);
-      const offset = page <= 1 ? 0 : (page - 1) * limit;
-
-      flightModel
-        .getAll(name, sort, typesort, limit, offset)
-        .then((result) => {
-          // redisClient.set("products", JSON.stringify(result));
-          const totalRows = result[0].count;
-          const meta = {
-            total: totalRows,
-            totalPage: Math.ceil(totalRows / limit),
-            page: page,
-          };
-          successWithMeta(res, result, meta, "Get all data success");
-        })
-        .catch((err) => {
-          failed(res, [], err.message);
-        });
-
       //getRedis 
       flightModel.getAllData()
         .then((results) => {
+          // console.log(results)
+          if (results.length === 0) {
+            notfound(res, [], 'Data empty')
+          } else {
+            success(res, results, 'Get all data success!')
+          }
           redisClient.set('flight', JSON.stringify(results))
         }).catch((err) => {
           failed(res, [], err.message)
@@ -63,25 +45,14 @@ const flight = {
   },
   insert: (req, res) => {
     try {
-      upload.single("image")(req, res, (err) => {
-        if (err) {
-          if (err.code === 'LIMIT_FILE_SIZE') {
-            failed(res, [], 'Image must less 2mb')
-          } else {
-            failed(res, [], err.message)
-          }
-        } else {
-          const body = req.body;
-          body.image = !req.file.filename ? req.file : req.file.filename
-          flightModel.insert(body)
-            .then((result) => {
-              redisClient.del("flight")
-              success(res, result, `Insert data success!`)
-            }).catch((err) => {
-              failed(res, [], err.message)
-            });
-        }
-      })
+      const body = req.body;
+      flightModel.insert(body)
+        .then((result) => {
+          redisClient.del("flight")
+          success(res, result, `Insert data success!`)
+        }).catch((err) => {
+          failed(res, [], err.message)
+        });
     } catch (error) {
       failed(res, [], 'Internal Server Error')
     }
