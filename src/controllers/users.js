@@ -6,6 +6,7 @@ const { PRIVATEKEY, REFRESHTOKEN } = require('../helpers/env')
 const nodemailer = require('nodemailer')
 const env = require('../helpers/env')
 const fs = require('fs')
+const upload = require('../helpers/uploads')
 
 const users = {
     register: async (req, res) => {
@@ -156,7 +157,6 @@ const users = {
         // } catch (error) {
         //     failed(res, [], 'Internal Server Error')
         // }
-
         upload.single('image')(req, res, (err) => {
             if (err) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
@@ -166,8 +166,8 @@ const users = {
                 }
             } else {
                 const id = req.params.id
-                userModel.getDetail(id)
-                .then((result) => {
+                const body = req.body
+                userModel.getDetail(id).then((result) => {
                     const oldImg = result[0].image
                     body.image = !req.file ? oldImg : req.file.filename
 

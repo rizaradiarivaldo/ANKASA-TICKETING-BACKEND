@@ -27,7 +27,7 @@ const users = {
 
     getDetail: (id) => {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT FROM users WHERE id = '${id}'`, (err, result) => {
+            db.query(`SELECT * FROM users WHERE id = '${id}'`, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {
