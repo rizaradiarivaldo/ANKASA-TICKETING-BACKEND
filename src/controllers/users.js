@@ -114,7 +114,7 @@ const users = {
                         const dataUser = {
                             username: results.username,
                             role: results.role
-                        }
+                        }   
 
                         const refreshToken = jwt.sign(dataUser, REFRESHTOKEN)
                         const token = newerToken(dataUser)
@@ -140,7 +140,7 @@ const users = {
                         failed(res, [], 'Activation needed!')
                     }
                 } else {
-                    failed(res, [], 'Password is wrong')
+                    failed(res, [], err.message)
                 }
             }
         }).catch((err) => {
