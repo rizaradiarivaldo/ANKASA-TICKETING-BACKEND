@@ -24,7 +24,7 @@ const users = {
             userModel.register(data, img).then((result) => {
                 const token = jwt.sign({ email: body.email }, PRIVATEKEY)
                 const output = `
-                    <center><h1>HELLO ${req.body.email}</h1>
+                    <center><h3>Hello ${req.body.email}</h3>
                     <h3>Thank you for registration</h3>
                     <p>You can confirm your email by clicking the link below <br> <a href="http://18.207.247.9:3005/users/active/${token}">Activation</a></p></center>
                     `
