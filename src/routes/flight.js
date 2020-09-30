@@ -1,14 +1,14 @@
 const express = require('express')
 const flightController = require('../controllers/flight')
-const { getAllFlight } = require('../helpers/redis')
+const { admin, authentication, authorization } = require('../helpers/auth')
 const router = express.Router();
 
 router
-  .get("/getall", getAllFlight, flightController.getAll)
-  .get("/getdetail/:id", flightController.getDetail)
-  .post("/insert", flightController.insert)
-  .delete("/delete/:id", flightController.delete)
-  .patch('/update/:id', flightController.update)
+  .get("/getall", flightController.getAll)
+  .get("/getdetail/:id", authentication, authorization, flightController.getDetail)
+  .post("/insert", authentication, authorization, admin, flightController.insert)
+  .delete("/delete/:id", authentication, authorization, admin, flightController.delete)
+  .patch('/update/:id', authentication, authorization, admin, flightController.update)
 
 
 module.exports = router

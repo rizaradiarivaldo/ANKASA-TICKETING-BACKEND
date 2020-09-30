@@ -4,28 +4,47 @@ const { success, successWithMeta, notfound, failed } = require('../helpers/respo
 const fs = require('fs')
 
 const redis = require("redis");
+const { isDate } = require('lodash');
 const redisClient = redis.createClient();
 
 const flight = {
   getAll: (req, res) => {
-    try {
-      //getRedis 
-      flightModel.getAllData()
-        .then((results) => {
-          // console.log(results)
-          if (results.length === 0) {
-            notfound(res, [], 'Data empty')
-          } else {
-            success(res, results, 'Get all data success!')
-          }
-          redisClient.set('flight', JSON.stringify(results))
-        }).catch((err) => {
-          failed(res, [], err.message)
-        });
-    } catch (error) {
-      failed(res, [], 'Error Internal Server')
-    }
+    // try {
+    // const airlines = !req.query.airlines ? '' : req.query.airlines;
+
+
+
+    const from_city = !req.query.from_city ? '' : req.query.from_city;
+    const to_city = !req.query.to_city ? '' : req.query.to_city;
+
+    const typeflight = !req.query.typeflight ? '' : req.query.typeflight;
+
+    const date_departure = !req.query.date_departure ? '' : req.query.date_departure;
+
+    const child = !req.query.child ? '' : req.query.child;
+    const adult = !req.query.adult ? '' : req.query.adult;
+
+    const classtype = !req.query.classtype ? '' : req.query.classtype;
+
+    flightModel.getAll(from_city, to_city, typeflight, date_departure, child, adult, classtype)
+      .then((result) => {
+        // console.log(result)
+        if (result.length === 0) {
+          notfound(res, [], 'Data empty')
+        } else {
+          success(res, result, 'Get all data success!')
+        }
+      }).catch((err) => {
+        failed(res, [], err.message)
+      });
+
+
+    // } catch (error) {
+    //   failed(res, [], 'Error Internal Server')
+    // }
   },
+
+
   getDetail: (req, res) => {
     try {
       const id = req.params.id
