@@ -27,12 +27,12 @@ module.exports = {
         const token = req.headers.token
         jwt.verify(token, PRIVATEKEY, (err, decode) => {
           if (err && err.name === 'JsonWebTokenError') {
-            errToken(res, [], "Authentification failed !");
+            tokenErrorResult(res, [], "Authentification failed !");
           } else if (err && err.name === 'TokenExpiredError') {
-            errToken(res, [], "Token Expired !");
+            tokenExpiredResult(res, [], "Token Expired !");
           }
           else {
-            if (decode.dataUser.role === 1) {
+            if (decode.role === 1) {
               next()
             } else {
               forbidden(res, 'Dont have permission!')
