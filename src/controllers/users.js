@@ -26,7 +26,7 @@ const users = {
                 const output = `
                     <center><h1>HELLO ${req.body.email}</h1>
                     <h3>Thank you for registration</h3>
-                    <p>You can confirm your email by clicking the link below <br> <a href="http://localhost:3000/users/active/${token}">Activation</a></p></center>
+                    <p>You can confirm your email by clicking the link below <br> <a href="http://18.207.247.9:3005/users/active/${token}">Activation</a></p></center>
                     `
                 let transporter = nodemailer.createTransport({
                     host: 'smtp.gmail.com',
