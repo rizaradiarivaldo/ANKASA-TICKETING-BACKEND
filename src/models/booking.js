@@ -1,4 +1,3 @@
-const { result } = require('lodash')
 const db = require('../configs/db')
 
 const booking = {
@@ -15,11 +14,11 @@ const booking = {
     },
     update: (data, id) => {
         return new Promise((resolve, reject) => {
-            db.query(`UPDATE booking SET ? WHERE id=?`, [data, id], (err, result) => {
+            db.query(`UPDATE booking SET ? WHERE id = ?`, [data, id], (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {
-                    resolve(err)
+                    resolve(result)
                 }
             })
         })
@@ -48,7 +47,7 @@ const booking = {
     },
     delete: (id) => {
         return new Promise((resolve, reject) => {
-            db.query(`'DELETE FROM booking WHERE id='${id}'`, (err, result) => {
+            db.query(`DELETE FROM booking WHERE id='${id}'`, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {

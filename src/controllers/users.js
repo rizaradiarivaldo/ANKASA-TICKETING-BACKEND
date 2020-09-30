@@ -79,7 +79,7 @@ const users = {
             const body = req.body
             const usersData = {
                 username: body.username,
-                password: body.password
+                password: body.password,
             }
             userModel.login(usersData).then(async (result) => {
                 const results = result[0]
