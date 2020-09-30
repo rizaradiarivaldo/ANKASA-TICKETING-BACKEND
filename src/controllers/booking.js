@@ -9,7 +9,6 @@ const booking = {
         try {
             const body = req.body
             bookingModel.insert(body).then((result) => {
-                redisClient.del('booking')
                 success(res, result, 'Booking success')
             }).catch((err) => {
                 failed(res, [], err.message)
