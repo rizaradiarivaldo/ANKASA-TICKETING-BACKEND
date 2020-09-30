@@ -8,7 +8,7 @@ const env = require('../helpers/env')
 const fs = require('fs')
 
 const users = {
-    register: async (req, res, next) => {
+    register: async (req, res) => {
         try {
             const body = req.body
             const password = req.body.password
@@ -34,7 +34,7 @@ const users = {
                 })
 
                 let Mail = {
-                    from: '"Ankasa"',
+                    from: '"Ankasa" <testerweb533@gmail.com>',
                     to: req.body.email,
                     subject: "Verification Email",
                     text: "Plaintext version of the message",
@@ -123,12 +123,12 @@ const users = {
                             failed(res, [], 'Activation needed!')
                         }
                     } else {
-                        failed(res, [], err.message)
+                        failed(res, [], 'Password is wrong')
                     }
                 }
             }).catch((err) => {
                 if (err.message === `Cannot read property 'id' of undefined`) {
-                    failed(res, [], 'Username or Password wrong, check again!')
+                    failed(res, [], 'Username is wrong')
                 } else {
                     failed(res, [], err.message)
                 }
