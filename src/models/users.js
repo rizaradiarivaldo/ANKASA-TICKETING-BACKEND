@@ -15,7 +15,7 @@ const users = {
 
     login: (data) => {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT * FROM users WHERE username = ?`, data.username, (err, result) => {
+            db.query(`SELECT * FROM users WHERE username='${data.username}'`, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {
