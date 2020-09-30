@@ -25,6 +25,18 @@ const users = {
         })
     },
 
+    getAllUser: () => {
+        return new Promise((resolve, result) => {
+            db.query(`SELECT * FROM users`, (err, result) => {
+                if (err) {
+                    reject(new Error(err))
+                } else {
+                    resolve(result)
+                }
+            })
+        })
+    },
+
     getDetail: (id) => {
         return new Promise((resolve, reject) => {
             db.query(`SELECT * FROM users WHERE id = '${id}'`, (err, result) => {

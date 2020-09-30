@@ -9,6 +9,7 @@ router
     .post('/refreshToken', userController.requestToken)
     .get('/active/:token', userController.active)
     .patch('/update/:id', userController.updateData)
+    .get('/getDetail/:id', userController.getDetail)
     // .post('/reset', userController.resetPassword)
     // .post('/confirm', userController.confirmPassword)
 

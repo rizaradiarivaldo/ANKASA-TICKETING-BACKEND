@@ -206,6 +206,19 @@ const users = {
         })
     },
 
+    getDetail: (req, res) => {
+        const id = req.params.id
+        userModel.getDetail(id).then((result) => {
+            if (result.length === 0) {
+                notfound(res, [], 'Data not found')
+            } else {
+                success(res, result, `Get detail by ID: ${id} success`)
+            }
+        }).catch((err) => {
+            failed(res, [], err.message)
+        })
+    },
+
     requestToken: (req, res) => {
         const tokenReq = req.body.refreshToken
         if (!tokenReq) {
