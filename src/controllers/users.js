@@ -13,9 +13,15 @@ const users = {
             const body = req.body
             const password = req.body.password
             const salt = await bcrypt.genSalt(10)
-            const hashPassword = await bcrypt.hash(password, salt)
+            const generate = await bcrypt.hash(password, salt)
             const img = "default.jpg"
-            userModel.register(body, hashPassword, img).then((result) => {
+
+            const data = {
+                username: body.username,
+                email: body.email,
+                password: generate
+            }
+            userModel.register(data, img).then((result) => {
                 const token = jwt.sign({ email: body.email }, PRIVATEKEY)
                 const output = `
                     <center><h1>HELLO ${req.body.email}</h1>
@@ -79,7 +85,7 @@ const users = {
             const body = req.body
             const usersData = {
                 username: body.username,
-                password: body.password,
+                password: body.password
             }
             userModel.login(usersData).then(async (result) => {
                 const results = result[0]
