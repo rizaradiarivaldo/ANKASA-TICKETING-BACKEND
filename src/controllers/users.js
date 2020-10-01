@@ -208,7 +208,11 @@ const users = {
 
     getAll: (req, res) => {
         userModel.getAllUser().then((result) => {
-            success(res, result, 'Get all data success')
+            if (result.length === 0) {
+                notfound(res, [], 'Data not found')
+            } else {
+                success(res, result, 'Get all data success')
+            }
         }).catch((err) => {
             failed(res, [], err.message)
         })
