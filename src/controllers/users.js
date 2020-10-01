@@ -1,5 +1,5 @@
 const userModel = require('../models/users')
-const { success, failed, tokenResult } = require('../helpers/response')
+const { success, failed, tokenResult, notfound } = require('../helpers/response')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { PRIVATEKEY, REFRESHTOKEN } = require('../helpers/env')
@@ -203,6 +203,18 @@ const users = {
                     failed(res, [], err.message)
                 })
             }
+        })
+    },
+
+    getAll: (req, res) => {
+        userModel.getAllUser().then((result) => {
+            if (result.length === 0) {
+                notfound(res, [], 'Data not found')
+            } else {
+                success(res, result, 'Get all data success')
+            }
+        }).catch((err) => {
+            failed(res, [], err.message)
         })
     },
 

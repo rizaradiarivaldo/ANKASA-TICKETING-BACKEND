@@ -10,6 +10,7 @@ router
     .get('/active/:token', userController.active)
     .patch('/update/:id', userController.updateData)
     .get('/getDetail/:id', userController.getDetail)
+    .get('/getAll', userController.getAll)
     // .post('/reset', userController.resetPassword)
     // .post('/confirm', userController.confirmPassword)
 
