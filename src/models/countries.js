@@ -14,17 +14,6 @@ const countries = {
     });
   },
 
-  getAllData: () => {
-    return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM countries`, (err, result) => {
-        if (err) {
-          reject(new Error(err))
-        } else {
-          resolve(result)
-        }
-      })
-    })
-  },
   getDetail: (id) => {
     return new Promise((resolve, reject) => {
       db.query(`SELECT * FROM countries WHERE id='${id}'`, (err, result) => {

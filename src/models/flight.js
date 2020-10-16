@@ -4,33 +4,21 @@ const flight = {
 
   getAll: (fromcity, tocity, typeflight, child, adult, classflight,datedeparture) => {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT idflight,airlines.idairlines,nameairlines,airlines.image as imageairlines, fromcity.idcities, fromcity.namecity, fromcountry.idcountries, fromcountry.namecountries,fromcountry.alias, tocity.idcities, tocity.namecity, tocountry.idcountries, tocountry.namecountries,tocountry.alias,code,classflight,typeflight,child,adult,transit,direct,moretransit,luggage,meal,wifi,date_departure,departure,arrived,price,rating,total_reviewed, flight.created_at FROM (((((flight INNER JOIN airlines ON flight.idairlines=airlines.idairlines) INNER join cities as fromcity on flight.idfromcity=fromcity.idcities) INNER JOIN countries as fromcountry ON fromcity.idcities=fromcountry.idcountries)INNER JOIN cities as tocity on flight.idtocity=tocity.idcities) INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries) WHERE fromcity.namecity LIKE '%${fromcity}%' AND tocity.namecity LIKE '%${tocity}%' AND typeflight=${typeflight} AND child=${child} AND adult=${adult} AND classflight=${classflight} AND date_departure='${datedeparture}'`, (err, result) => {
-        if (err) {
-          reject(new Error(err))
-        } else {
-          resolve(result)
-        }
-      })
-    })
-  },
-  // getAll: (from_city, to_city, typeflight, date_departure, child, adult, classflight) => {
-  //   return new Promise((resolve, reject) => {
-  //     const query = `SELECT flight.id, id_airlines, airlines.name as airlanes_name, airlines.image, from_city, a.name as fromcity, c.name as fromcountry, to_city, b.name as tocity, d.name as tocountry, code, classflight, typeflight, child, adult, transit,direct,more_transit,luggage,meal,wifi,date_departure,departure,arrived,price,rating,total_reviewed FROM (((((flight INNER JOIN airlines on flight.id_airlines = airlines.id) INNER JOIN cities as a on flight.from_city = a.id )INNER JOIN cities as b on flight.to_city = b.id) INNER JOIN countries as c on a.id_country = c.id) INNER JOIN countries as d on b.id_country = d.id) WHERE a.name LIKE '%${from_city}%' AND b.name LIKE '%${to_city}%' AND typeflight LIKE '%${typeflight}%' AND date_departure LIKE '%${date_departure}%' AND child LIKE '%${child}%' AND adult LIKE '%${adult}%' AND classflight LIKE '%${classflight}%'`;
-  //     db.query(query, (err, result) => {
-  //       if (err) {
-  //         reject(new Error(err));
-  //       } else {
-  //         resolve(result);
-  //       }
-  //     });
-  //   });
-  // },
-
-
-
-  getAllData: () => {
-    return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM flight`, (err, result) => {
+      db.query(`SELECT idflight,airlines.idairlines,nameairlines,
+      airlines.image as imageairlines, fromcity.idcities, 
+      fromcity.namecity, fromcountry.idcountries, fromcountry.namecountries,fromcountry.alias, 
+      tocity.idcities, tocity.namecity, tocountry.idcountries, 
+      tocountry.namecountries,tocountry.alias,code,classflight,typeflight,child,
+      adult,transit,direct,moretransit,luggage,meal,wifi,date_departure,
+      departure,arrived,price,rating,total_reviewed, 
+      flight.created_at FROM (((((flight INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
+      INNER join cities as fromcity on flight.idfromcity=fromcity.idcities) 
+      INNER JOIN countries as fromcountry ON fromcity.idcities=fromcountry.idcountries)
+      INNER JOIN cities as tocity on flight.idtocity=tocity.idcities) 
+      INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries) 
+      WHERE fromcity.namecity LIKE '%${fromcity}%' AND tocity.namecity LIKE '%${tocity}%'
+      AND typeflight=${typeflight} AND child=${child} AND adult=${adult} AND classflight=${classflight}
+      AND date_departure='${datedeparture}'`, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {
