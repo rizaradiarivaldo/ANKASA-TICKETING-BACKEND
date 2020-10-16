@@ -3,10 +3,6 @@ const upload = require("../helpers/uploads");
 const { success, successWithMeta, notfound, failed } = require('../helpers/response')
 const fs = require('fs')
 
-const redis = require("redis");
-const { isDate } = require('lodash');
-const redisClient = redis.createClient();
-
 const flight = {
   getAll: (req, res) => {
     // try {
@@ -67,7 +63,6 @@ const flight = {
       const body = req.body;
       flightModel.insert(body)
         .then((result) => {
-          redisClient.del("flight")
           success(res, result, `Insert data success!`)
         }).catch((err) => {
           failed(res, [], err.message)
@@ -83,7 +78,6 @@ const flight = {
       const body = req.body
       flightModel.update(body, id)
         .then((result) => {
-          redisClient.del("flight")
           success(res, result, 'Data Updated!')
         }).catch((error) => {
           failed(res, [], error.message)
@@ -97,7 +91,6 @@ const flight = {
       const id = req.params.id
       flightModel.delete(id)
         .then((result) => {
-          redisClient.del("flight")
           success(res, result, `ID ${id} success deleted!`)
         }).catch((err) => {
           failed(res, [], err.message)

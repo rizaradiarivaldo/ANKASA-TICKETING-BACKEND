@@ -3,9 +3,6 @@ const upload = require("../helpers/uploads");
 const { success, successWithMeta, notfound, failed } = require('../helpers/response')
 const fs = require('fs')
 
-const redis = require("redis");
-const redisClient = redis.createClient();
-
 const airlines = {
   getAll: (req, res) => {
     try {
@@ -30,14 +27,6 @@ const airlines = {
         })
         .catch((err) => {
           failed(res, [], err.message);
-        });
-
-      //getRedis 
-      airlinesModel.getAllData()
-        .then((results) => {
-          redisClient.set('airlines', JSON.stringify(results))
-        }).catch((err) => {
-          failed(res, [], err.message)
         });
     } catch (error) {
       failed(res, [], 'Error Internal Server')
@@ -78,7 +67,6 @@ const airlines = {
           } else {
             airlinesModel.insert(body)
               .then((result) => {
-                redisClient.del("airlines")
                 success(res, result, `Insert data success!`)
               }).catch((err) => {
                 failed(res, [], err.message)
@@ -151,7 +139,6 @@ const airlines = {
             } else {
               airlinesModel.delete(id)
                 .then((result) => {
-                  redisClient.del("airlines")
                   success(res, result, `ID ${id} success deleted!`)
                 }).catch((err) => {
                   failed(res, [], err.message)

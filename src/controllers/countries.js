@@ -2,8 +2,6 @@ const countriesModel = require('../models/countries.js')
 
 const { success, successWithMeta, notfound, failed } = require('../helpers/response')
 
-const redis = require("redis");
-const redisClient = redis.createClient();
 
 const countries = {
   getAll: (req, res) => {
@@ -33,14 +31,6 @@ const countries = {
         })
         .catch((err) => {
           failed(res, [], err.message);
-        });
-
-      //getRedis 
-      countriesModel.getAllData()
-        .then((results) => {
-          redisClient.set('countries', JSON.stringify(results))
-        }).catch((err) => {
-          failed(res, [], err.message)
         });
     } catch (error) {
       failed(res, [], 'Error Internal Server')
@@ -73,7 +63,6 @@ const countries = {
       } else {
         countriesModel.insert(body)
           .then((result) => {
-            redisClient.del("countries")
             success(res, result, `Insert data success!`)
           }).catch((err) => {
             failed(res, [], err.message)
@@ -92,7 +81,6 @@ const countries = {
           if (result.affectedRows === 0) {
             failed(res, [], 'Data not found for update')
           } else {
-            redisClient.del("countries")
             success(res, result, `ID ${id} success updated!`)
           }
         })
@@ -112,7 +100,6 @@ const countries = {
           if (result.affectedRows === 0) {
             failed(res, [], 'Data not found for delete')
           } else {
-            redisClient.del("countries")
             success(res, result, `ID ${id} success deleted!`)
           }
         }).catch((err) => {
