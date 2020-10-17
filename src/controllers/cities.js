@@ -42,16 +42,13 @@ const cities = {
                     }
                 } else {
                     const body = req.body
-                    body.image = !req.file ? undefined : req.file.filename
-                    if (body.image === undefined) {
-                        failed(res, [], 'Image must have value')
-                    } else {
-                        citiesModel.insert(body).then((result) => {
-                            success(res, result, 'Insert data success !')
-                        }).catch((err) => {
-                            failed(res, [], err.message)
-                        })
-                    }
+                    body.image = !req.file ? 'default.jpg' : req.file.filename
+                    
+                    citiesModel.insert(body).then((result) => {
+                        success(res, result, 'Insert data success !')
+                    }).catch((err) => {
+                        failed(res, [], err.message)
+                    })
                 }
             })
         } catch (error) {

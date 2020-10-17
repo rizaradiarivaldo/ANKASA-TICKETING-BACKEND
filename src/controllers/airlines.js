@@ -107,6 +107,7 @@ const airlines = {
               const oldImage = responses
               body.image = !req.file ? oldImage : req.file.filename
 
+              // if (body.image === undefined) {}
               if (body.image !== oldImage) {
                 if (body.image !== 'default.jpg') {
                   fs.unlink(`src/uploads/${oldImage}`, (err) => {
