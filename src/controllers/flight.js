@@ -21,8 +21,18 @@ const flight = {
       const direct = !req.query.direct ? '' : req.query.direct;
       const transit = !req.query.transit ? '' : req.query.transit;
       const moretransit = !req.query.moretransit ? '' : req.query.moretransit;
+
+      const departurefrom = !req.query.departurefrom ? '00:00:00' : req.query.departurefrom;
+      const departureto = !req.query.departureto ? '24:00:00' : req.query.departureto;
       
-      flightModel.getAll(fromcity, tocity, typeflight, child, adult, classflight, datedeparture,nameairlines,luggage,meal,wifi,direct,transit,moretransit)
+      const arrivedfrom = !req.query.arrivedfrom ? '00:00:00' : req.query.arrivedfrom;
+      const arrivedto = !req.query.arrivedto ? '24:00:00' : req.query.arrivedto;
+      
+      const pricefrom = !req.query.pricefrom ? '0' : req.query.pricefrom;
+      const priceto = !req.query.priceto ? '99999999999' : req.query.priceto;
+
+      
+      flightModel.getAll(fromcity, tocity, typeflight, child, adult, classflight, datedeparture,nameairlines,luggage,meal,wifi,direct,transit,moretransit,departurefrom,departureto, arrivedfrom,arrivedto, pricefrom, priceto)
         .then((result) => {
           if (result.length === 0) {
             notfound(res, [], 'Data empty')
