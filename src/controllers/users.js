@@ -98,7 +98,7 @@ const users = {
         
         userModel.login(usersData).then(async (result) => {
             const results = result[0]
-            const id = results.id
+            const id = results.idusers
 
             if (!results) {
                 failed(res, [], 'Email not registered, Please register!')
@@ -163,7 +163,7 @@ const users = {
                     failed(res, [], err)
                 }
             } else {
-                const id = req.params.id
+                const id = req.params.idusers
                 const body = req.body
                 userModel.getDetail(id).then((result) => {
                     const oldImg = result[0].image
@@ -217,7 +217,7 @@ const users = {
     },
 
     getDetail: (req, res) => {
-        const id = req.params.id
+        const id = req.params.idusers
         userModel.getDetail(id).then((result) => {
             if (result.length === 0) {
                 notfound(res, [], 'Data not found')

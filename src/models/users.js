@@ -39,7 +39,7 @@ const users = {
 
     getDetail: (id) => {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT * FROM users WHERE id = '${id}'`, (err, result) => {
+            db.query(`SELECT * FROM users WHERE idusers = '${id}'`, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {
@@ -63,7 +63,7 @@ const users = {
 
     updateAllData: (data, id) => {
         return new Promise((resolve, reject) => {
-            db.query(`UPDATE users SET ? WHERE id = ?`, [data, id], (err, result) => {
+            db.query(`UPDATE users SET ? WHERE idusers = ?`, [data, id], (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -75,7 +75,7 @@ const users = {
 
     updateRefreshToken: (token, id) => {
         return new Promise((resolve, reject) => {
-            db.query(`UPDATE users SET refreshToken='${token}' WHERE id='${id}'`, (err, result) => {
+            db.query(`UPDATE users SET refreshToken='${token}' WHERE idusers='${id}'`, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {
