@@ -76,7 +76,7 @@ const cities = {
                         body.image = !req.file ? oldImage : req.file.filename
 
                         if (body.image !== oldImage) {
-                            if (oldImage !== null) {
+                            if (body.image !== 'default.jpg') {
                                 fs.unlink(`src/uploads/${oldImage}`, (err) => {
                                     if (err) {
                                         failed(res, [], err.message)

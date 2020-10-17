@@ -138,7 +138,7 @@ const users = {
                         body.image = !req.file ? oldImg : req.file.filename
     
                         if (body.image !== oldImg) {
-                            if (oldImg !== 'default.jpg') {
+                            if (body.image !== 'default.jpg') {
                                 fs.unlink(`src/uploads/${oldImg}`, (err) => {
                                     if (err) {
                                         failed(res, [], err.message)

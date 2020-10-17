@@ -34,7 +34,18 @@ const flight = {
   },
   getDetail: (id) => {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM flight WHERE idflight='${id}'`, (err, result) => {
+      db.query(`SELECT idflight,airlines.idairlines,nameairlines,
+      airlines.image as imageairlines, fromcity.idcities, 
+      fromcity.namecity, fromcountry.idcountries, fromcountry.namecountries,fromcountry.alias, 
+      tocity.idcities, tocity.namecity, tocountry.idcountries, 
+      tocountry.namecountries,tocountry.alias,code,classflight,typeflight,child,
+      adult,transit,direct,moretransit,luggage,meal,wifi,date_departure,
+      departure,arrived,price,rating,total_reviewed, 
+      flight.created_at FROM (((((flight INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
+      INNER join cities as fromcity on flight.idfromcity=fromcity.idcities) 
+      INNER JOIN countries as fromcountry ON fromcity.idcities=fromcountry.idcountries)
+      INNER JOIN cities as tocity on flight.idtocity=tocity.idcities) 
+      INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries) WHERE idflight='${id}'`, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {
