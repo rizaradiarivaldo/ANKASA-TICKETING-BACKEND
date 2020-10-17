@@ -7,12 +7,13 @@ const flightRouter = require('./src/routes/flight')
 const bookingRouter = require('./src/routes/booking')
 const countriesRouter = require('./src/routes/countries')
 const citiesRouter = require('./src/routes/cities')
+const cors = require('cors')
 
 const path = require('path')
 const ejs = require('ejs')
 
 const app = express()
-
+app.use(cors())
 app.set('views', path.join(__dirname, 'src/views'))
 app.set('view engine', 'ejs')
 

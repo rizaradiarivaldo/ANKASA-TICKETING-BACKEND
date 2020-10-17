@@ -6,9 +6,9 @@ const flight = {
     return new Promise((resolve, reject) => {
       db.query(`SELECT idflight,airlines.idairlines,nameairlines,
       airlines.image as imageairlines, fromcity.idcities, 
-      fromcity.namecity, fromcountry.idcountries, fromcountry.namecountries,fromcountry.alias, 
+      fromcity.namecity, fromcountry.idcountries, fromcountry.namecountries,fromcountry.alias as fromalias, 
       tocity.idcities, tocity.namecity, tocountry.idcountries, 
-      tocountry.namecountries,tocountry.alias,code,classflight,typeflight,child,
+      tocountry.namecountries,tocountry.alias as toalias,code,classflight,typeflight,child,
       adult,transit,direct,moretransit,luggage,meal,wifi,date_departure,
       departure,arrived,price,rating,total_reviewed, 
       flight.created_at FROM (((((flight INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
