@@ -32,9 +32,24 @@ const airlines = {
       failed(res, [], 'Error Internal Server')
     }
   },
+
+  getAllData: (req, res) => {
+    try {
+      airlinesModel
+        .getAllData().then((result) => {
+          success(res, result, "Get all data success");
+        })
+        .catch((err) => {
+          failed(res, [], err.message);
+        });
+    } catch (error) {
+      failed(res, [], 'Error Internal Server')
+    }
+  },
+
   getDetail: (req, res) => {
     try {
-      const id = req.params.id
+      const id = req.params.idairlines
       airlinesModel.getDetail(id)
         .then((result) => {
           if (result.length === 0) {
@@ -89,7 +104,7 @@ const airlines = {
             failed(res, [], err.message)
           }
         } else {
-          const id = req.params.id
+          const id = req.params.idairlines
           const body = req.body
           airlinesModel.getDetail(id)
             .then((response) => {
@@ -129,7 +144,7 @@ const airlines = {
 
   delete: (req, res) => {
     try {
-      const id = req.params.id
+      const id = req.params.idairlines
       airlinesModel.getDetail(id)
         .then((results) => {
           const dataImage = results[0].image

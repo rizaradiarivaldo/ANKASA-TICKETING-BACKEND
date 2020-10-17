@@ -5,9 +5,9 @@ const { admin, authentication, authorization } = require('../helpers/auth')
 
 router
     .get('/getAll', authentication, authorization, bookingController.getAll)
-    .get('/getDetail/:id', authentication, authorization, bookingController.getDetail)
+    .get('/getDetail/:idbooking', authentication, authorization, bookingController.getDetail)
     .post('/insert', authentication, authorization, bookingController.insert)
-    .patch('/update/:id', admin, authentication, authorization, bookingController.update)
-    .delete('/delete/:id', admin, authentication, authorization, bookingController.delete)
+    .patch('/update/:idbooking', admin, authentication, authorization, bookingController.update)
+    .delete('/delete/:idbooking', admin, authentication, authorization, bookingController.delete)
 
 module.exports = router

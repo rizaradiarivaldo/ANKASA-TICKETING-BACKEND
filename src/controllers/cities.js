@@ -17,7 +17,7 @@ const cities = {
     },
     getDetail: (req, res) => {
         try {
-            const id = req.params.id
+            const id = req.params.idcities
             citiesModel.getDetail(id).then((result) => {
                 if (result.length === 0) {
                     notfound(res, [], 'Data not found')
@@ -68,7 +68,7 @@ const cities = {
                         failed(res, [], err.message)
                     }
                 } else {
-                    const id = req.params.id
+                    const id = req.params.idcities
                     const body = req.body
                     citiesModel.getDetail(id).then((response) => {
                         const results = response[0].image
@@ -103,7 +103,7 @@ const cities = {
     },
     delete: (req, res) => {
         try {
-            const id = req.params.id
+            const id = req.params.idcities
             citiesModel.getDetail(id).then((result) => {
                 const dataImages = result[0].image
                 fs.unlink(`src/uploads/${dataImages}`, (err) => {

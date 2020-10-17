@@ -17,8 +17,9 @@ const flight = {
       INNER JOIN cities as tocity on flight.idtocity=tocity.idcities) 
       INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries) 
       WHERE fromcity.namecity LIKE '%${fromcity}%' AND tocity.namecity LIKE '%${tocity}%'
-      AND typeflight=${typeflight} AND child=${child} AND adult=${adult} AND classflight=${classflight}
-      AND date_departure='${datedeparture}'`, (err, result) => {
+      AND typeflight LIKE '%${typeflight}%' AND child LIKE '%${child}%' AND adult LIKE '%${adult}%' AND classflight LIKE '%${classflight}%'
+      AND date_departure LIKE '%${datedeparture}%'
+      `, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {
@@ -29,7 +30,7 @@ const flight = {
   },
   getDetail: (id) => {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM flight WHERE id='${id}'`, (err, result) => {
+      db.query(`SELECT * FROM flight WHERE idflight='${id}'`, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {
@@ -53,7 +54,7 @@ const flight = {
 
   update: (data, id) => {
     return new Promise((resolve, reject) => {
-      db.query(`UPDATE flight SET ? WHERE id = ?`, [data, id], (err, result) => {
+      db.query(`UPDATE flight SET ? WHERE idflight = ?`, [data, id], (err, result) => {
         if (err) {
           reject(new Error(err));
         } else {
@@ -65,7 +66,7 @@ const flight = {
 
   delete: (id) => {
     return new Promise((resolve, reject) => {
-      db.query(`DELETE FROM flight WHERE id='${id}'`, (err, result) => {
+      db.query(`DELETE FROM flight WHERE idflight='${id}'`, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {

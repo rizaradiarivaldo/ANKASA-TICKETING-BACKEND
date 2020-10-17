@@ -5,45 +5,33 @@ const fs = require('fs')
 
 const flight = {
   getAll: (req, res) => {
-    // try {
-    // const airlines = !req.query.airlines ? '' : req.query.airlines;
+    try {
+      const fromcity = !req.query.fromcity ? '' : req.query.fromcity;
+      const tocity = !req.query.tocity ? '' : req.query.tocity;
+      const typeflight = !req.query.typeflight ? '' : req.query.typeflight;
+      const child = !req.query.child ? '' : req.query.child;
+      const adult = !req.query.adult ? '' : req.query.adult;
+      const classflight = !req.query.classflight ? '' : req.query.classflight;
+      const datedeparture = !req.query.datedeparture ? '' : req.query.datedeparture;
 
-
-
-    const from_city = !req.query.from_city ? '' : req.query.from_city;
-    const to_city = !req.query.to_city ? '' : req.query.to_city;
-
-    const typeflight = !req.query.typeflight ? '' : req.query.typeflight;
-
-    const date_departure = !req.query.date_departure ? '' : req.query.date_departure;
-
-    const child = !req.query.child ? '' : req.query.child;
-    const adult = !req.query.adult ? '' : req.query.adult;
-
-    const classtype = !req.query.classtype ? '' : req.query.classtype;
-
-    flightModel.getAll(from_city, to_city, typeflight, date_departure, child, adult, classtype)
-      .then((result) => {
-        // console.log(result)
-        if (result.length === 0) {
-          notfound(res, [], 'Data empty')
-        } else {
-          success(res, result, 'Get all data success!')
-        }
-      }).catch((err) => {
-        failed(res, [], err.message)
-      });
-
-
-    // } catch (error) {
-    //   failed(res, [], 'Error Internal Server')
-    // }
+      flightModel.getAll(fromcity, tocity, typeflight, child, adult, classflight, datedeparture)
+        .then((result) => {
+          if (result.length === 0) {
+            notfound(res, [], 'Data empty')
+          } else {
+            success(res, result, 'Get all data success!')
+          }
+        }).catch((err) => {
+          failed(res, [], err.message)
+        });
+    } catch (error) {
+      failed(res, [], 'Error Internal Server')
+    }
   },
-
 
   getDetail: (req, res) => {
     try {
-      const id = req.params.id
+      const id = req.params.idflight
       flightModel.getDetail(id)
         .then((result) => {
           if (result.length === 0) {
@@ -74,7 +62,7 @@ const flight = {
 
   update: (req, res) => {
     try {
-      const id = req.params.id
+      const id = req.params.idflight
       const body = req.body
       flightModel.update(body, id)
         .then((result) => {
@@ -88,7 +76,7 @@ const flight = {
   },
   delete: (req, res) => {
     try {
-      const id = req.params.id
+      const id = req.params.idflight
       flightModel.delete(id)
         .then((result) => {
           success(res, result, `ID ${id} success deleted!`)
