@@ -5,10 +5,10 @@ const { admin, authentication, authorization } = require('../helpers/auth')
 const router = express.Router()
 
 router
-  .get('/getAll', authentication, authorization, countriesController.getAll)
-  .get('/getDetail/:id', authentication, authorization, countriesController.getDetail)
+  .get('/getAll', authentication, authorization, countriesController.getAllData)
+  .get('/getDetail/:idcountries', authentication, authorization, countriesController.getDetail)
   .post('/insert', authentication, authorization, admin, countriesController.insert)
-  .patch('/update/:id', authentication, authorization, admin, countriesController.update)
-  .delete('/delete/:id', authentication, authorization, admin, countriesController.delete)
+  .patch('/update/:idcountries', authentication, authorization, admin, countriesController.update)
+  .delete('/delete/:idcountries', authentication, authorization, admin, countriesController.delete)
 
 module.exports = router

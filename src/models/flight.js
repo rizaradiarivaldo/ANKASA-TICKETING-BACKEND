@@ -2,7 +2,7 @@ const db = require('../configs/db')
 
 const flight = {
 
-  getAll: (fromcity, tocity, typeflight, child, adult, classflight,datedeparture) => {
+  getAll: (fromcity, tocity, typeflight, child, adult, classflight,datedeparture,nameairlines,luggage,meal,wifi,direct,transit,moretransit) => {
     return new Promise((resolve, reject) => {
       db.query(`SELECT idflight,airlines.idairlines,nameairlines,
       airlines.image as imageairlines, fromcity.idcities, 
@@ -18,8 +18,7 @@ const flight = {
       INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries) 
       WHERE fromcity.namecity LIKE '%${fromcity}%' AND tocity.namecity LIKE '%${tocity}%'
       AND typeflight LIKE '%${typeflight}%' AND child LIKE '%${child}%' AND adult LIKE '%${adult}%' AND classflight LIKE '%${classflight}%'
-      AND date_departure LIKE '%${datedeparture}%'
-      `, (err, result) => {
+      AND date_departure LIKE '%${datedeparture}%' AND nameairlines LIKE '%${nameairlines}%' AND luggage LIKE '%${luggage}%' AND meal LIKE '%${meal}%' AND wifi LIKE '%${wifi}%' AND direct LIKE '%${direct}%' AND transit  LIKE '%${transit}%' AND moretransit  LIKE '%${moretransit}%'`, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {

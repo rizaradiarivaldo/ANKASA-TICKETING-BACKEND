@@ -20,14 +20,13 @@ const users = {
         const password = req.body.password
         const salt = await bcrypt.genSalt(10)
         const generate = await bcrypt.hash(password, salt)
-        const img = "default.jpg"
 
         const data = {
             username: body.username,
             email: body.email,
             password: generate
         }
-        userModel.register(data, img).then((result) => {
+        userModel.register(data).then((result) => {
             const token = jwt.sign({ email: body.email }, PRIVATEKEY)
             const output = `
                 <center><h3>Hello ${req.body.email}</h3>
@@ -52,7 +51,6 @@ const users = {
                 text: "Plaintext version of the message",
                 html: output
             }
-
             transporter.sendMail(Mail)
             success(res, result, 'Please check your email to activation')
         }).catch((err) => {

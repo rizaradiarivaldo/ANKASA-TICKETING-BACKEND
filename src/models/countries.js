@@ -14,9 +14,22 @@ const countries = {
     });
   },
 
+  getAllData: () => {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM countries`;
+      db.query(query, (err, result) => {
+        if (err) {
+          reject(new Error(err));
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  },
+
   getDetail: (id) => {
     return new Promise((resolve, reject) => {
-      db.query(`SELECT * FROM countries WHERE id='${id}'`, (err, result) => {
+      db.query(`SELECT * FROM countries WHERE idcountries='${id}'`, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {
@@ -28,7 +41,7 @@ const countries = {
 
   insert: (data) => {
     return new Promise((resolve, reject) => {
-      db.query(`INSERT INTO countries (name) VALUES ('${data.name}')`, (err, result) => {
+      db.query(`INSERT INTO countries (namecountries,alias) VALUES ('${data.namecountries}','${data.alias}')`, (err, result) => {
         if (err) {
           reject(new Error(err));
         } else {
@@ -40,7 +53,7 @@ const countries = {
 
   update: (data, id) => {
     return new Promise((resolve, reject) => {
-      db.query(`UPDATE countries SET ? WHERE id = ?`, [data, id], (err, result) => {
+      db.query(`UPDATE countries SET ? WHERE idcountries = ?`, [data, id], (err, result) => {
         if (err) {
           reject(new Error(err));
         } else {
@@ -52,7 +65,7 @@ const countries = {
 
   delete: (id) => {
     return new Promise((resolve, reject) => {
-      db.query(`DELETE FROM countries WHERE id='${id}'`, (err, result) => {
+      db.query(`DELETE FROM countries WHERE idcountries='${id}'`, (err, result) => {
         if (err) {
           reject(new Error(err))
         } else {

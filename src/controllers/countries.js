@@ -37,9 +37,27 @@ const countries = {
     }
   },
 
+  getAllData: (req, res) => {
+    try {
+      countriesModel
+        .getAllData().then((result) => {
+          if (result.length === 0) {
+            notfound(res, [], 'Data empty')
+          } else {
+            success(res, result, "Get all data success");
+          }
+        })
+        .catch((err) => {
+          failed(res, [], err.message);
+        });
+    } catch (error) {
+      failed(res, [], 'Error Internal Server')
+    }
+  },
+
   getDetail: (req, res) => {
     try {
-      const id = req.params.id
+      const id = req.params.idcountries
       countriesModel.getDetail(id)
         .then((result) => {
           if (result.length === 0) {
@@ -74,7 +92,7 @@ const countries = {
   },
   update: (req, res) => {
     try {
-      const id = req.params.id
+      const id = req.params.idcountries
       const body = req.body
       countriesModel.update(body, id)
         .then((result) => {
@@ -94,7 +112,7 @@ const countries = {
 
   delete: (req, res) => {
     try {
-      const id = req.params.id
+      const id = req.params.idcountries
       countriesModel.delete(id)
         .then((result) => {
           if (result.affectedRows === 0) {

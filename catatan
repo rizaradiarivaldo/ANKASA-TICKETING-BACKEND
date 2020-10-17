@@ -14,7 +14,7 @@
   INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries) 
   WHERE fromcity.namecity LIKE '%%' AND tocity.namecity LIKE '%%'
   AND typeflight LIKE '%%' AND child LIKE '%%' AND adult LIKE '%%' AND classflight LIKE '%%'
-  AND date_departure LIKE '%%'
+  AND date_departure LIKE '%%' AND nameairlines LIKE '%%' AND luggage LIKE '%%' AND meal LIKE '%%' AND wifi LIKE '%%' AND direct LIKE '%%' AND transit  LIKE '%%' AND moretransit  LIKE '%%'
 
   //booking
   SELECT idbooking, users.idusers, email,phone, username, city, address, postcode, users.image as imageusers, flight.idflight,airlines.idairlines,nameairlines,

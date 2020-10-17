@@ -14,7 +14,15 @@ const flight = {
       const classflight = !req.query.classflight ? '' : req.query.classflight;
       const datedeparture = !req.query.datedeparture ? '' : req.query.datedeparture;
 
-      flightModel.getAll(fromcity, tocity, typeflight, child, adult, classflight, datedeparture)
+      const nameairlines = !req.query.nameairlines ? '' : req.query.nameairlines;
+      const luggage = !req.query.luggage ? '' : req.query.luggage;
+      const meal = !req.query.meal ? '' : req.query.meal;
+      const wifi = !req.query.wifi ? '' : req.query.wifi;
+      const direct = !req.query.direct ? '' : req.query.direct;
+      const transit = !req.query.transit ? '' : req.query.transit;
+      const moretransit = !req.query.moretransit ? '' : req.query.moretransit;
+      
+      flightModel.getAll(fromcity, tocity, typeflight, child, adult, classflight, datedeparture,nameairlines,luggage,meal,wifi,direct,transit,moretransit)
         .then((result) => {
           if (result.length === 0) {
             notfound(res, [], 'Data empty')
