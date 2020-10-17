@@ -2,8 +2,7 @@ const userModel = require('../models/users')
 const { success, failed, tokenResult, notfound } = require('../helpers/response')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { PRIVATEKEY, REFRESHTOKEN, EMAIL, PASSWORD_EMAIL, PORT_AWS } = require('../helpers/env')
-const nodemailer = require('nodemailer')
+const { PRIVATEKEY, REFRESHTOKEN } = require('../helpers/env')
 const fs = require('fs')
 const upload = require('../helpers/uploads')
 const { confirmEmail } = require('../helpers/sendEmail')
@@ -140,7 +139,7 @@ const users = {
     
                         if (body.image !== oldImg) {
                             if (oldImg !== 'default.jpg') {
-                                fs.unlink(`src/upload/${oldImg}`, (err) => {
+                                fs.unlink(`src/uploads/${oldImg}`, (err) => {
                                     if (err) {
                                         failed(res, [], err.message)
                                     } else {

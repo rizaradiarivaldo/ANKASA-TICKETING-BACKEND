@@ -76,22 +76,17 @@ const airlines = {
           }
         } else {
           const body = req.body;
-          body.image = !req.file ? undefined : req.file.filename
-          if (body.image === undefined) {
-            failed(res, [], 'Image must have a value')
-          } else {
-            airlinesModel.insert(body)
-              .then((result) => {
-                success(res, result, `Insert data success!`)
-              }).catch((err) => {
-                failed(res, [], err.message)
-              });
+          body.image = !req.file ? 'default.jpg' : req.file.filename
 
-          }
+          airlinesModel.insert(body).then((result) => {
+            success(res, result, `Insert data success!`)
+          }).catch((err) => {
+            failed(res, [], err.message)
+          })
         }
       })
     } catch (error) {
-      failed(res, [], 'Internal Server Error')
+      failed(res, [], error.me)
     }
   },
   update: (req, res) => {
@@ -111,20 +106,29 @@ const airlines = {
               const responses = response[0].image
               const oldImage = responses
               body.image = !req.file ? oldImage : req.file.filename
+
               if (body.image !== oldImage) {
-                fs.unlink(`src/uploads/${oldImage}`, (err) => {
-                  if (err) {
+                if (body.image !== 'default.jpg') {
+                  fs.unlink(`src/uploads/${oldImage}`, (err) => {
+                    if (err) {
+                      failed(res, [], err.message)
+                    } else {
+                      airlinesModel.update(body, id)
+                        .then((result) => {
+                          success(res, result, 'Update success')
+                        })
+                        .catch((err) => {
+                          failed(res, [], err.message)
+                        })
+                    }
+                  })
+                } else {
+                  airlinesModel.update(body, id).then((result) => {
+                    success(res, result, 'Update success')
+                  }).catch((err) => {
                     failed(res, [], err.message)
-                  } else {
-                    airlinesModel.update(body, id)
-                      .then((result) => {
-                        success(res, result, 'Update success')
-                      })
-                      .catch((err) => {
-                        failed(res, [], err.message)
-                      })
-                  }
-                })
+                  })
+                }
               } else {
                 airlinesModel.update(body, id)
                   .then((result) => {

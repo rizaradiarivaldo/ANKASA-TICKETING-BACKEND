@@ -10,19 +10,24 @@ const booking = {
                 failed(res, [], err.message)
             })
         } catch (error) {
-            failed(res, [], 'Internal Server Error')
+            failed(res, [], error.message)
         }
     },
     getDetail: (req, res) => {
         try {
             const id = req.params.idbooking
+            
             bookingModel.getDetail(id).then((result) => {
-                success(res, result, 'Get detail success')
+                if (result.length === 0) {
+                    notfound(res, [], 'Data not found')
+                } else {
+                    success(res, result, 'Get detail success')
+                }
             }).catch((err) => {
                 failed(res, [], err.message)
             })
         } catch (error) {
-            failed(res, [], 'Internal Server Error')
+            failed(res, [], error.message)
         }
     },
     insert: (req, res) => {
@@ -34,7 +39,7 @@ const booking = {
                 failed(res, [], err.message)
             })
         } catch (error) {
-            failed(res, [], 'Internal Server Error')
+            failed(res, [], error.message)
         }
     },
     update: (req, res) => {
@@ -43,9 +48,11 @@ const booking = {
             const body = req.body
             bookingModel.update(body, id).then((result) => {
                 success(res, result, 'Update success')
+            }).catch((err) => {
+                failed(res, [], err.message)
             })
         } catch (error) {
-            failed(res, [], 'Internal Server Error')
+            failed(res, [], error.message)
         }
     },
    
@@ -58,7 +65,7 @@ const booking = {
                 failed(res, [], err.message)
             })
         } catch (error) {
-            failed(res, [], 'Internal Server Error')
+            failed(res, [], error.message)
         }
     }
 }

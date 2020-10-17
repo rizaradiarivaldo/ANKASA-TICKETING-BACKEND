@@ -12,7 +12,7 @@ const cities = {
                 failed(res, [], err.message)
             })
         } catch (error) {
-            failed(res, [], 'Internal server error')
+            failed(res, [], error.message)
         }
     },
     getDetail: (req, res) => {
@@ -28,7 +28,7 @@ const cities = {
                 failed(res, [], err.message)
             })
         } catch (error) {
-            failed(res, [], 'Internal server error')
+            failed(res, [], error.message)
         }
     },
     insert: (req, res) => {
@@ -55,7 +55,7 @@ const cities = {
                 }
             })
         } catch (error) {
-            failed(res, [], 'Internal server error')
+            failed(res, [], error.message)
         }
     },
     update: (req, res) => {
@@ -71,22 +71,30 @@ const cities = {
                     const id = req.params.idcities
                     const body = req.body
                     citiesModel.getDetail(id).then((response) => {
-                        const results = response[0].image
+                        const results = response[0].imagecities
                         const oldImage = results
                         body.image = !req.file ? oldImage : req.file.filename
 
                         if (body.image !== oldImage) {
-                            fs.unlink(`src/uploads/${oldImage}`, (err) => {
-                                if (err) {
-                                    failed(res, [], err.message)
-                                } else {
-                                    citiesModel.update(body, id).then((result) => {
-                                        success(res, result, 'Update success')
-                                    }).catch((err) => {
+                            if (oldImage !== null) {
+                                fs.unlink(`src/uploads/${oldImage}`, (err) => {
+                                    if (err) {
                                         failed(res, [], err.message)
-                                    })
-                                }
-                            })
+                                    } else {
+                                        citiesModel.update(body, id).then((result) => {
+                                            success(res, result, 'Update success')
+                                        }).catch((err) => {
+                                            failed(res, [], err.message)
+                                        })
+                                    }
+                                })
+                            } else {
+                                citiesModel.update(body, id).then((result) => {
+                                    success(res, result, 'Update success')
+                                }).catch((err) => {
+                                    failed(res, [], err.message)
+                                })
+                            }
                         } else {
                             citiesModel.update(body, id).then((result) => {
                                 success(res, result, 'Update success')
@@ -98,14 +106,14 @@ const cities = {
                 }
             })
         } catch (error) {
-            failed(res, [], 'Internal server error')
+            failed(res, [], error.message)
         }
     },
     delete: (req, res) => {
         try {
             const id = req.params.idcities
             citiesModel.getDetail(id).then((result) => {
-                const dataImages = result[0].image
+                const dataImages = result[0].imagecities
                 fs.unlink(`src/uploads/${dataImages}`, (err) => {
                     if (err) {
                         failed(res, [], err.message)
@@ -121,7 +129,7 @@ const cities = {
                 failed(res, [], err.message)
             })
         } catch (error) {
-            failed(res, [], 'Internal server error')
+            failed(res, [], error.message)
         }
     }
 }
