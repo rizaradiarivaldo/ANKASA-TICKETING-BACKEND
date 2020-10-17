@@ -109,22 +109,32 @@ const cities = {
             failed(res, [], error.message)
         }
     },
+
     delete: (req, res) => {
         try {
             const id = req.params.idcities
             citiesModel.getDetail(id).then((result) => {
                 const dataImages = result[0].imagecities
-                fs.unlink(`src/uploads/${dataImages}`, (err) => {
-                    if (err) {
-                        failed(res, [], err.message)
-                    } else {
-                        citiesModel.delete(id).then((result) => {
-                            success(res, result, 'Delete data success')
-                        }).catch((err) => {
+
+                if (dataImages !== 'default.jpg') {
+                    fs.unlink(`src/uploads/${dataImages}`, (err) => {
+                        if (err) {
                             failed(res, [], err.message)
-                        })
-                    }
-                })
+                        } else {
+                            citiesModel.delete(id).then((result) => {
+                                success(res, result, 'Delete data success')
+                            }).catch((err) => {
+                                failed(res, [], err.message)
+                            })
+                        }
+                    })
+                } else {
+                    citiesModel.delete(id).then((result) => {
+                        success(res, result, 'Delete data success')
+                    }).catch((err) => {
+                        failed(res, [], err.message)
+                    })
+                }
             }).catch((err) => {
                 failed(res, [], err.message)
             })

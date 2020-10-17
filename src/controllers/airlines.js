@@ -152,18 +152,27 @@ const airlines = {
       airlinesModel.getDetail(id)
         .then((results) => {
           const dataImage = results[0].image
-          fs.unlink(`src/uploads/${dataImage}`, (err) => {
-            if (err) {
+
+          if (dataImage !== 'default.jpg') {
+            fs.unlink(`src/uploads/${dataImage}`, (err) => {
+              if (err) {
+                failed(res, [], err.message)
+              } else {
+                airlinesModel.delete(id)
+                  .then((result) => {
+                    success(res, result, `ID ${id} success deleted!`)
+                  }).catch((err) => {
+                    failed(res, [], err.message)
+                  });
+              }
+            })
+          } else {
+            airlinesModel.delete(id).then((result) => {
+              success(res, result, `ID ${id} success deleted!`)
+            }).catch((err) => {
               failed(res, [], err.message)
-            } else {
-              airlinesModel.delete(id)
-                .then((result) => {
-                  success(res, result, `ID ${id} success deleted!`)
-                }).catch((err) => {
-                  failed(res, [], err.message)
-                });
-            }
-          })
+            });
+          }
         }).catch((err) => {
           console.log(err)
         });
