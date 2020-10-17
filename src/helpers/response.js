@@ -6,17 +6,17 @@ const response = {
             status: 200,
             data
         }
-        res.status(200).json(result)
+        res.json(result)
     },
     successWithMeta: (res, data, meta, message) => {
         const result = {
             message,
             success: true,
-            code: 200,
+            code: 201,
             meta,
             data,
         };
-        res.status(200).json(result);
+        res.json(result);
     },
     failed: (res, data, message) => {
         const result = {
@@ -25,7 +25,7 @@ const response = {
             status: 500,
             data
         }
-        res.status(500).json(result)
+        res.json(result)
     },
     notfound: (res, data, message) => {
         const result = {
@@ -34,16 +34,16 @@ const response = {
             status: 404,
             data
         }
-        res.status(404).json(result)
+        res.json(result)
     },
     tokenResult: (res, data, message) => {
         const result = {
             message,
             success: true,
-            status: 201,
+            status: 202,
             data
         }
-        res.status(201).json(result)
+        res.json(result)
     },
     tokenErrorResult: (res, data, message) => {
         const result = {
@@ -52,7 +52,7 @@ const response = {
             status: 501,
             data
         }
-        res.status(501).json(result)
+        res.json(result)
     },
     tokenExpiredResult: (res, data, message) => {
         const result = {
@@ -61,7 +61,7 @@ const response = {
             status: 502,
             data
         }
-        res.status(502).json(result)
+        res.json(result)
     },
     forbidden: (res, message) => {
         const result = {
@@ -69,7 +69,7 @@ const response = {
           success: false,
           code: 403,
         };
-        res.status(403).json(result);
+        res.json(result);
     }
 }
 

@@ -7,7 +7,7 @@ router
     .post('/register', userController.register)
     .post('/login', userController.login)
     .post('/refreshToken', userController.requestToken)
-    .get('/active/:token', userController.active)
+    .get('/verify/:token', userController.verify)
     .patch('/update/:idusers', userController.updateData)
     .get('/getDetail/:idusers', userController.getDetail)
     .get('/getAll', userController.getAll)
