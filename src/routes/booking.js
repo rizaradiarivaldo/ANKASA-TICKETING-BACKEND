@@ -4,7 +4,7 @@ const router = express.Router()
 const { admin, authentication, authorization } = require('../helpers/auth')
 
 router
-    .get('/getAll', authentication, authorization, bookingController.getAll)
+    .get('/getAll', authentication, authorization, bookingController.getAllData)
     .get('/getDetail/:idbooking', authentication, authorization, bookingController.getDetail)
     .post('/insert', authentication, authorization, bookingController.insert)
     .patch('/update/:idbooking', admin, authentication, authorization, bookingController.update)
