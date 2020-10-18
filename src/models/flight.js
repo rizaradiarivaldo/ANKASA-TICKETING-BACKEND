@@ -6,16 +6,16 @@ const flight = {
     return new Promise((resolve, reject) => {
       db.query(`SELECT idflight,airlines.idairlines,nameairlines,
       airlines.image as imageairlines, fromcity.idcities, 
-      fromcity.namecity, fromcountry.idcountries, fromcountry.namecountries,fromcountry.alias as fromalias, 
-      tocity.idcities, tocity.namecity, tocountry.idcountries, 
-      tocountry.namecountries,tocountry.alias as toalias,code,classflight,typeflight,child,
+      fromcity.namecity as fromnamecity, fromcountry.idcountries, fromcountry.namecountries as fromcountry,fromcountry.alias as fromalias, 
+      tocity.idcities, tocity.namecity as tonamecity, tocountry.idcountries, 
+      tocountry.namecountries as tocountry,tocountry.alias as toalias,code,classflight,typeflight,child,
       adult,transit,direct,moretransit,luggage,meal,wifi,date_departure,
       departure,arrived,price,rating,total_reviewed, 
       flight.created_at FROM (((((flight INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
       INNER join cities as fromcity on flight.idfromcity=fromcity.idcities) 
       INNER JOIN countries as fromcountry ON fromcity.idcities=fromcountry.idcountries)
       INNER JOIN cities as tocity on flight.idtocity=tocity.idcities) 
-      INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries) 
+      INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries)
       WHERE fromcity.namecity LIKE '%${fromcity}%' AND tocity.namecity LIKE '%${tocity}%'
       AND typeflight LIKE '%${typeflight}%' AND child LIKE '%${child}%' AND adult LIKE '%${adult}%'
       AND classflight LIKE '%${classflight}%' AND date_departure LIKE '%${datedeparture}%' 
@@ -36,9 +36,9 @@ const flight = {
     return new Promise((resolve, reject) => {
       db.query(`SELECT idflight,airlines.idairlines,nameairlines,
       airlines.image as imageairlines, fromcity.idcities, 
-      fromcity.namecity, fromcountry.idcountries, fromcountry.namecountries,fromcountry.alias, 
-      tocity.idcities, tocity.namecity, tocountry.idcountries, 
-      tocountry.namecountries,tocountry.alias,code,classflight,typeflight,child,
+      fromcity.namecity as fromnamecity, fromcountry.idcountries, fromcountry.namecountries as fromcountry,fromcountry.alias as fromalias, 
+      tocity.idcities, tocity.namecity as tonamecity, tocountry.idcountries, 
+      tocountry.namecountries as tocountry,tocountry.alias as toalias,code,classflight,typeflight,child,
       adult,transit,direct,moretransit,luggage,meal,wifi,date_departure,
       departure,arrived,price,rating,total_reviewed, 
       flight.created_at FROM (((((flight INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
