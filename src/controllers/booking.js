@@ -16,12 +16,28 @@ const booking = {
     getDetail: (req, res) => {
         try {
             const id = req.params.idbooking
-            
+
             bookingModel.getDetail(id).then((result) => {
                 if (result.length === 0) {
                     notfound(res, [], 'Data not found')
                 } else {
                     success(res, result, 'Get detail success')
+                }
+            }).catch((err) => {
+                failed(res, [], err.message)
+            })
+        } catch (error) {
+            failed(res, [], error.message)
+        }
+    },
+    getBookingUser: (req, res) => {
+        try {
+            const idusers = req.params.idusers
+            bookingModel.getBookingUser(idusers).then((result) => {
+                if (result.length === 0) {
+                    notfound(res, [], 'Data not found')
+                } else {
+                    success(res, result, `Get data booking where ID users: ${idusers} success`)
                 }
             }).catch((err) => {
                 failed(res, [], err.message)
@@ -55,7 +71,7 @@ const booking = {
             failed(res, [], error.message)
         }
     },
-   
+
     delete: (req, res) => {
         try {
             const id = req.params.idbooking

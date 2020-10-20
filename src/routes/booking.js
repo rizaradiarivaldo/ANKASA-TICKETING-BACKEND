@@ -6,6 +6,7 @@ const { admin, authentication, authorization } = require('../helpers/auth')
 router
     .get('/getAll', authentication, authorization, bookingController.getAllData)
     .get('/getDetail/:idbooking', authentication, authorization, bookingController.getDetail)
+    .get('/getBookingUser/:idusers', authentication, authorization, bookingController.getBookingUser)
     .post('/insert', authentication, authorization, bookingController.insert)
     .patch('/update/:idbooking', admin, authentication, authorization, bookingController.update)
     .delete('/delete/:idbooking', admin, authentication, authorization, bookingController.delete)
