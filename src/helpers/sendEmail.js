@@ -1,6 +1,7 @@
 const { PRIVATEKEY, EMAIL, PASSWORD_EMAIL} = require('../helpers/env')
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
+const { PORT_AWS } = require('../helpers/env')
 
 module.exports = {
     confirmEmail: (email) => {
@@ -9,7 +10,7 @@ module.exports = {
         const output = `
                     <center><h3>Hello ${email}</h3>
                     <h3>Thank you for registration</h3>
-                    <p>You can confirm your email by clicking the link below <br> <a href="http://52.23.174.220:8000/users/verify/${token}">Activation</a></p></center>
+                    <p>You can confirm your email by clicking the link below <br> <a href="${PORT_AWS}/users/verify/${token}">Activation</a></p></center>
                     `
 
         let transporter = nodemailer.createTransport({
