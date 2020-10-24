@@ -9,6 +9,7 @@ router
     .get('/getBookingUser/:idusers', authentication, authorization, bookingController.getBookingUser)
     .post('/insert', authentication, authorization, bookingController.insert)
     .patch('/update/:idbooking', admin, authentication, authorization, bookingController.update)
-    .delete('/delete/:idbooking', admin, authentication, authorization, bookingController.delete)
+    .delete('/delete/:idbooking', authentication, authorization, bookingController.delete)
+    .patch('/updatePayment/:idbooking', authentication, authorization, bookingController.updatePayment)
 
 module.exports = router

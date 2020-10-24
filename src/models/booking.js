@@ -30,12 +30,12 @@ const booking = {
             tocity.idcities, tocity.namecity as tonamecity, tocountry.idcountries, 
             tocountry.namecountries as tocountry,tocountry.alias as toalias,code,classflight,typeflight,child,
             adult,transit,direct,moretransit,luggage,meal,wifi,date_departure,
-            departure,arrived,price,rating,total_reviewed, title, fullname, nationality, insurance, payment_status, terminal, gate, total, booking.created_at FROM (((((((booking INNER JOIN users ON booking.idusers= users.idusers) INNER JOIN flight ON booking.idflight=flight.idflight) INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
+            departure,arrived,price,rating,total_reviewed, title, fullname, nationality, insurance, payment_status, terminal, gate, total, booking.image, booking.created_at FROM (((((((booking INNER JOIN users ON booking.idusers= users.idusers) INNER JOIN flight ON booking.idflight=flight.idflight) INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
             INNER JOIN cities as fromcity on flight.idfromcity=fromcity.idcities) 
             INNER JOIN countries as fromcountry ON fromcity.idcities=fromcountry.idcountries)
             INNER JOIN cities as tocity on flight.idtocity=tocity.idcities) 
             INNER JOIN countries as tocountry on tocity.idcities=tocountry.idcountries)
-            WHERE users.idbooking=${id}`, (err, result) => {
+            WHERE booking.idbooking=${id}`, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {
@@ -92,6 +92,18 @@ const booking = {
     delete: (id) => {
         return new Promise((resolve, reject) => {
             db.query(`DELETE FROM booking WHERE idbooking='${id}'`, (err, result) => {
+                if (err) {
+                    reject(new Error(err))
+                } else {
+                    resolve(result)
+                }
+            })
+        })
+    },
+
+    updatePayment: (data, id) => {
+        return new Promise((resolve, reject) => {
+            db.query(`UPDATE booking SET payment_status=1, image='${data.image}' WHERE idbooking='${id}'`, (err, result) => {
                 if (err) {
                     reject(new Error(err))
                 } else {

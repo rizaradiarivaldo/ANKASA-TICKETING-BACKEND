@@ -107,7 +107,7 @@ const users = {
                             failed(res, [], 'Activation needed!')
                         }
                     } else {
-                        failed(res, [], err.message)
+                        failed(res, [], 'Password is wrong')
                     }
                 }
             }).catch((err) => {
