@@ -29,8 +29,7 @@ const booking = {
             fromcity.namecity as fromnamecity, fromcountry.idcountries, fromcountry.namecountries as fromcountry,fromcountry.alias as fromalias, 
             tocity.idcities, tocity.namecity as tonamecity, tocountry.idcountries, 
             tocountry.namecountries as tocountry,tocountry.alias as toalias,code,classflight,typeflight,child,
-            adult,transit,direct,moretransit,luggage,meal,wifi,date_departure,
-            departure,arrived,price,rating,total_reviewed, title, fullname, nationality, insurance, payment_status, terminal, gate, total, booking.image, booking.created_at FROM (((((((booking INNER JOIN users ON booking.idusers= users.idusers) INNER JOIN flight ON booking.idflight=flight.idflight) INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
+            adult,transit,direct,moretransit,luggage,meal,wifi,DATE_FORMAT(date_departure, "%W, %e %M %Y") as date_departure, TIME_FORMAT(departure, "%h:%i %p")departure,arrived,price,rating,total_reviewed, title, fullname, nationality, insurance, payment_status, terminal, gate, total, booking.image, booking.created_at FROM (((((((booking INNER JOIN users ON booking.idusers= users.idusers) INNER JOIN flight ON booking.idflight=flight.idflight) INNER JOIN airlines ON flight.idairlines=airlines.idairlines) 
             INNER JOIN cities as fromcity on flight.idfromcity=fromcity.idcities) 
             INNER JOIN countries as fromcountry ON fromcity.idcities=fromcountry.idcountries)
             INNER JOIN cities as tocity on flight.idtocity=tocity.idcities) 
